@@ -93,11 +93,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-button:hover:not(:disabled),
-.upload-label:hover {
-    opacity: 0.9;
-}
-
 input[type="file"] {
     display: none;
 }
@@ -127,10 +122,6 @@ input[type="file"] {
     margin-top: 20px;
     padding: 25px;
     text-align: center;
-}
-
-.result h2 {
-    margin-bottom: 10px;
 }
 
 #detected {
@@ -256,16 +247,13 @@ footer {
 
 </section>
 
-
 <section id="camera-area">
     <div id="webcam-container"></div>
 </section>
 
-
 <section id="image-area">
     <img id="uploaded-image" alt="Uploaded waste">
 </section>
-
 
 <section class="result">
 
@@ -287,7 +275,7 @@ footer {
         </p>
 
         <p>
-            <strong>🗑️ Recommended Disposal:</strong>
+            <strong>🗑️ Recommended Bin:</strong>
             <span id="disposal">-</span>
         </p>
 
@@ -299,7 +287,6 @@ footer {
     </div>
 
 </section>
-
 
 <section class="dashboard">
 
@@ -342,12 +329,7 @@ footer {
     EcoVision AI © 2026 | AI for Sustainable Waste Management
 </footer>
 
-
 <script>
-
-// ==============================
-// TEACHABLE MACHINE MODEL
-// ==============================
 
 const MODEL_URL =
     "https://teachablemachine.withgoogle.com/models/9fVlz2Y5_/";
@@ -455,8 +437,7 @@ async function startCamera() {
 
 // ==============================
 // CAMERA LOOP
-// IMPORTANT:
-// NO AI PREDICTION HERE
+// NO CONTINUOUS AI PREDICTION
 // ==============================
 
 function cameraLoop() {
@@ -525,7 +506,7 @@ function capturePhoto() {
 
 
 // ==============================
-// RETAKE PHOTO
+// RETAKE
 // ==============================
 
 function retakePhoto() {
@@ -544,7 +525,7 @@ function retakePhoto() {
 
 
 // ==============================
-// CONFIRM CAMERA SCAN
+// CONFIRM SCAN
 // ==============================
 
 async function confirmScan() {
@@ -556,7 +537,7 @@ async function confirmScan() {
     document.getElementById("status").innerText =
         "🤖 AI is analyzing the confirmed photo...";
 
-    await predict(capturedImage, true);
+    await predict(capturedImage);
 
     document.getElementById("confirmBtn").disabled = true;
     document.getElementById("retakeBtn").disabled = true;
@@ -598,7 +579,7 @@ function handleImage(event) {
         document.getElementById("status").innerText =
             "🤖 AI is analyzing the uploaded image...";
 
-        await predict(image, true);
+        await predict(image);
 
         document.getElementById("status").innerText =
             "✅ Image scan complete.";
@@ -607,13 +588,10 @@ function handleImage(event) {
 
 
 // ==============================
-// AI PREDICTION
+// PREDICTION
 // ==============================
 
-async function predict(
-    imageElement,
-    shouldCount
-) {
+async function predict(imageElement) {
 
     const prediction =
         await model.predict(imageElement);
@@ -645,8 +623,7 @@ async function predict(
 
     showResult(
         detectedClass,
-        highestProbability,
-        shouldCount
+        highestProbability
     );
 }
 
@@ -657,8 +634,7 @@ async function predict(
 
 function showResult(
     className,
-    probability,
-    shouldCount
+    probability
 ) {
 
     const name =
@@ -678,74 +654,71 @@ function showResult(
     let environment = "";
 
 
+    // PLASTIC
     if (name.includes("plastic")) {
 
         recycling =
             "Generally recyclable. Check local recycling rules.";
 
         disposal =
-            "Place in the designated plastic/recyclable waste bin.";
+            "🔵 Blue Bin — Recyclable Waste";
 
         environment =
             "Recycling plastic can reduce waste entering landfills.";
 
-        if (shouldCount) {
-            counts.plastic++;
-        }
-
+        counts.plastic++;
     }
 
+
+    // PAPER
     else if (name.includes("paper")) {
 
         recycling =
             "Clean and dry paper is generally recyclable.";
 
         disposal =
-            "Place in the paper/recyclable waste bin.";
+            "🔵 Blue Bin — Recyclable Waste";
 
         environment =
             "Paper recycling helps reduce the demand for new raw materials.";
 
-        if (shouldCount) {
-            counts.paper++;
-        }
-
+        counts.paper++;
     }
 
+
+    // GLASS
     else if (name.includes("glass")) {
 
         recycling =
             "Glass containers are commonly recyclable.";
 
         disposal =
-            "Place in the designated glass/recyclable waste collection.";
+            "🔵 Blue Bin — Recyclable Waste";
 
         environment =
             "Glass can often be recycled repeatedly.";
 
-        if (shouldCount) {
-            counts.glass++;
-        }
-
+        counts.glass++;
     }
 
+
+    // METAL
     else if (name.includes("metal")) {
 
         recycling =
             "Many metal containers are recyclable.";
 
         disposal =
-            "Place clean metal items in the appropriate recyclable waste stream.";
+            "🔵 Blue Bin — Recyclable Waste";
 
         environment =
             "Recycling metals can conserve raw materials and energy.";
 
-        if (shouldCount) {
-            counts.metal++;
-        }
-
+        counts.metal++;
     }
 
+
+    // ORGANIC
     else if (
         name.includes("organic") ||
         name.includes("food")
@@ -755,17 +728,16 @@ function showResult(
             "Organic waste can often be composted.";
 
         disposal =
-            "Place it in the organic/biodegradable waste stream.";
+            "🟢 Green Bin — Organic/Biodegradable Waste";
 
         environment =
             "Composting organic waste can reduce landfill waste.";
 
-        if (shouldCount) {
-            counts.organic++;
-        }
-
+        counts.organic++;
     }
 
+
+    // UNKNOWN
     else {
 
         recycling =
@@ -776,7 +748,6 @@ function showResult(
 
         environment =
             "Correct segregation helps improve waste management.";
-
     }
 
 
