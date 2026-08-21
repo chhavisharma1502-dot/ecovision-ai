@@ -434,9 +434,9 @@
         webcam.update();
 
         await predict(webcam.canvas);
-setTimeout(()=> {
-        window.requestAnimationFrame(cameraLoop);
-    }, 500);
+        //one scan completed
+        camerarunning = false;
+        webcam.stop();
     }
 
     // ==============================
@@ -539,10 +539,9 @@ setTimeout(()=> {
 
             environment =
                 "Recycling plastic can reduce the amount of plastic entering landfills.";
+            counts.plstic++;
 
-            
-
-        }
+             }
 
         else if (name.includes("paper")) {
 
@@ -554,8 +553,7 @@ setTimeout(()=> {
 
             environment =
                 "Paper recycling helps reduce the demand for new raw materials.";
-
-            
+            counts.paper++;
 
         }
 
@@ -569,10 +567,8 @@ setTimeout(()=> {
 
             environment =
                 "Glass can often be recycled repeatedly.";
-
-           
-
-        }
+            counts.glass++;
+  }
 
         else if (name.includes("metal")) {
 
@@ -602,6 +598,8 @@ setTimeout(()=> {
 
             environment =
                 "Composting organic waste can reduce landfill waste.";
+            
+            counts.organic++;
 
               }
 
