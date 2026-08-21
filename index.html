@@ -434,10 +434,10 @@
         webcam.update();
 
         await predict(webcam.canvas);
-
+setTimeout(()=> {
         window.requestAnimationFrame(cameraLoop);
+    }, 500);
     }
-
 
     // ==============================
     // IMAGE UPLOAD
@@ -540,7 +540,7 @@
             environment =
                 "Recycling plastic can reduce the amount of plastic entering landfills.";
 
-            counts.plastic++;
+            
 
         }
 
@@ -555,7 +555,7 @@
             environment =
                 "Paper recycling helps reduce the demand for new raw materials.";
 
-            counts.paper++;
+            
 
         }
 
@@ -570,7 +570,7 @@
             environment =
                 "Glass can often be recycled repeatedly.";
 
-            counts.glass++;
+           
 
         }
 
@@ -603,9 +603,7 @@
             environment =
                 "Composting organic waste can reduce landfill waste.";
 
-            counts.organic++;
-
-        }
+              }
 
         else {
 
