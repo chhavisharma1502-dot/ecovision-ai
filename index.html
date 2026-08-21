@@ -1,197 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EcoVision AI</title>
+<title>EcoVision AI</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
 
-        body {
-            background: #f1f8f4;
-            color: #183b2a;
-        }
+body {
+    background: #f1f8f4;
+    color: #183b2a;
+}
 
-        header {
-            background: #176b45;
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-        }
+header {
+    background: #176b45;
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+}
 
-        header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
+header h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
 
-        header p {
-            font-size: 15px;
-            opacity: 0.9;
-        }
+header p {
+    font-size: 15px;
+    opacity: 0.9;
+}
 
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            padding: 25px 15px;
-        }
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 25px 15px;
+}
 
-        .hero {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
+.hero,
+.result,
+.stat {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
 
-        .hero h2 {
-            font-size: 25px;
-            margin-bottom: 10px;
-        }
+.hero {
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        .hero p {
-            color: #607568;
-        }
+.hero h2 {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
 
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
+.hero p {
+    color: #607568;
+}
 
-        button,
-        .upload-label {
-            border: none;
-            border-radius: 12px;
-            padding: 13px 22px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #176b45;
-            color: white;
-        }
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
 
-        button:hover,
-        .upload-label:hover {
-            opacity: 0.9;
-        }
+button,
+.upload-label {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #176b45;
+    color: white;
+}
 
-        input[type="file"] {
-            display: none;
-        }
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 
-        #camera-area,
-        #image-area {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-        }
+button:hover:not(:disabled),
+.upload-label:hover {
+    opacity: 0.9;
+}
 
-        #webcam-container canvas {
-            border-radius: 18px;
-            max-width: 100%;
-        }
+input[type="file"] {
+    display: none;
+}
 
-        #uploaded-image {
-            max-width: 350px;
-            width: 100%;
-            border-radius: 18px;
-            display: none;
-        }
+#camera-area,
+#image-area {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
 
-        .result {
-            background: white;
-            margin-top: 20px;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            text-align: center;
-        }
+#webcam-container canvas,
+#captured-image {
+    border-radius: 18px;
+    max-width: 100%;
+    width: 320px;
+}
 
-        .result h2 {
-            margin-bottom: 10px;
-        }
+#uploaded-image {
+    max-width: 350px;
+    width: 100%;
+    border-radius: 18px;
+    display: none;
+}
 
-        #detected {
-            font-size: 30px;
-            font-weight: bold;
-            color: #176b45;
-            margin: 10px 0;
-        }
+.result {
+    margin-top: 20px;
+    padding: 25px;
+    text-align: center;
+}
 
-        #confidence {
-            color: #65756c;
-            margin-bottom: 15px;
-        }
+.result h2 {
+    margin-bottom: 10px;
+}
 
-        .info-box {
-            margin-top: 15px;
-            background: #eef7f1;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: left;
-        }
+#detected {
+    font-size: 30px;
+    font-weight: bold;
+    color: #176b45;
+    margin: 10px 0;
+}
 
-        .info-box p {
-            margin: 8px 0;
-        }
+#confidence {
+    color: #65756c;
+    margin-bottom: 15px;
+}
 
-        .dashboard {
-            margin-top: 25px;
-        }
+.info-box {
+    margin-top: 15px;
+    background: #eef7f1;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: left;
+}
 
-        .dashboard h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
+.info-box p {
+    margin: 8px 0;
+}
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-        }
+.dashboard {
+    margin-top: 25px;
+}
 
-        .stat {
-            background: white;
-            border-radius: 15px;
-            padding: 18px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-        }
+.dashboard h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
 
-        .stat h3 {
-            font-size: 25px;
-            color: #176b45;
-        }
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+}
 
-        .stat p {
-            margin-top: 5px;
-            color: #65756c;
-        }
+.stat {
+    padding: 18px;
+    text-align: center;
+}
 
-        #status {
-            margin-top: 15px;
-            color: #607568;
-        }
+.stat h3 {
+    font-size: 25px;
+    color: #176b45;
+}
 
-        footer {
-            text-align: center;
-            padding: 25px;
-            color: #65756c;
-        }
-    </style>
+.stat p {
+    margin-top: 5px;
+    color: #65756c;
+}
+
+#status {
+    margin-top: 15px;
+    color: #607568;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #65756c;
+}
+</style>
 </head>
 
 <body>
@@ -203,111 +209,132 @@
 
 <div class="container">
 
-    <section class="hero">
-        <h2>Identify Your Waste</h2>
+<section class="hero">
+
+    <h2>Identify Your Waste</h2>
+
+    <p>
+        Capture a waste item using your camera or upload an image.
+        Confirm the scan before the AI gives the final result.
+    </p>
+
+    <div class="buttons">
+
+        <button onclick="startCamera()">
+            📷 Start Camera
+        </button>
+
+        <button id="captureBtn"
+                onclick="capturePhoto()"
+                disabled>
+            📸 Capture Photo
+        </button>
+
+        <button id="retakeBtn"
+                onclick="retakePhoto()"
+                disabled>
+            🔄 Retake
+        </button>
+
+        <button id="confirmBtn"
+                onclick="confirmScan()"
+                disabled>
+            ✅ Confirm Scan
+        </button>
+
+        <label class="upload-label">
+            🖼️ Upload Image
+            <input type="file"
+                   id="imageUpload"
+                   accept="image/*"
+                   onchange="handleImage(event)">
+        </label>
+
+    </div>
+
+    <p id="status">Model is loading...</p>
+
+</section>
+
+
+<section id="camera-area">
+    <div id="webcam-container"></div>
+</section>
+
+
+<section id="image-area">
+    <img id="uploaded-image" alt="Uploaded waste">
+</section>
+
+
+<section class="result">
+
+    <h2>🔍 AI Result</h2>
+
+    <div id="detected">
+        Waiting for scan...
+    </div>
+
+    <div id="confidence">
+        -
+    </div>
+
+    <div class="info-box">
+
         <p>
-            Scan a waste item using your camera or upload an image.
-            EcoVision AI will identify its category and guide you.
+            <strong>♻️ Recycling:</strong>
+            <span id="recycling">-</span>
         </p>
 
-        <div class="buttons">
+        <p>
+            <strong>🗑️ Recommended Disposal:</strong>
+            <span id="disposal">-</span>
+        </p>
 
-            <button onclick="startCamera()">
-                📷 Start Camera
-            </button>
+        <p>
+            <strong>🌱 Environmental Info:</strong>
+            <span id="environment">-</span>
+        </p>
 
-            <label class="upload-label">
-                🖼️ Upload Image
-                <input type="file"
-                       id="imageUpload"
-                       accept="image/*"
-                       onchange="handleImage(event)">
-            </label>
+    </div>
 
+</section>
+
+
+<section class="dashboard">
+
+    <h2>📊 Waste Detection Dashboard</h2>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3 id="plasticCount">0</h3>
+            <p>Plastic</p>
         </div>
 
-        <p id="status">Model is loading...</p>
-    </section>
-
-
-    <section id="camera-area">
-        <div id="webcam-container"></div>
-    </section>
-
-
-    <section id="image-area">
-        <img id="uploaded-image" alt="Uploaded waste">
-    </section>
-
-
-    <section class="result">
-
-        <h2>🔍 AI Result</h2>
-
-        <div id="detected">
-            Waiting for scan...
+        <div class="stat">
+            <h3 id="paperCount">0</h3>
+            <p>Paper</p>
         </div>
 
-        <div id="confidence">
-            -
+        <div class="stat">
+            <h3 id="glassCount">0</h3>
+            <p>Glass</p>
         </div>
 
-        <div class="info-box">
-
-            <p>
-                <strong>♻️ Recycling:</strong>
-                <span id="recycling">-</span>
-            </p>
-
-            <p>
-                <strong>🗑️ Recommended Disposal:</strong>
-                <span id="disposal">-</span>
-            </p>
-
-            <p>
-                <strong>🌱 Environmental Info:</strong>
-                <span id="environment">-</span>
-            </p>
-
+        <div class="stat">
+            <h3 id="metalCount">0</h3>
+            <p>Metal</p>
         </div>
 
-    </section>
-
-
-    <section class="dashboard">
-
-        <h2>📊 Waste Detection Dashboard</h2>
-
-        <div class="stats">
-
-            <div class="stat">
-                <h3 id="plasticCount">0</h3>
-                <p>Plastic</p>
-            </div>
-
-            <div class="stat">
-                <h3 id="paperCount">0</h3>
-                <p>Paper</p>
-            </div>
-
-            <div class="stat">
-                <h3 id="glassCount">0</h3>
-                <p>Glass</p>
-            </div>
-
-            <div class="stat">
-                <h3 id="metalCount">0</h3>
-                <p>Metal</p>
-            </div>
-
-            <div class="stat">
-                <h3 id="organicCount">0</h3>
-                <p>Organic</p>
-            </div>
-
+        <div class="stat">
+            <h3 id="organicCount">0</h3>
+            <p>Organic</p>
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 </div>
 
@@ -318,347 +345,482 @@
 
 <script>
 
-    // ==============================
-    // YOUR TEACHABLE MACHINE MODEL
-    // ==============================
+// ==============================
+// TEACHABLE MACHINE MODEL
+// ==============================
 
-    const URL =
-        "https://teachablemachine.withgoogle.com/models/9fVlz2Y5_/";
+const MODEL_URL =
+    "https://teachablemachine.withgoogle.com/models/9fVlz2Y5_/";
 
-    let model;
-    let webcam;
-    let maxPredictions;
+let model;
+let webcam;
+let cameraRunning = false;
+let capturedImage = null;
 
-    let cameraRunning = false;
-
-    // Statistics
-    let counts = {
-        plastic: 0,
-        paper: 0,
-        glass: 0,
-        metal: 0,
-        organic: 0
-    };
+let counts = {
+    plastic: 0,
+    paper: 0,
+    glass: 0,
+    metal: 0,
+    organic: 0
+};
 
 
-    // ==============================
-    // LOAD AI MODEL
-    // ==============================
+// ==============================
+// LOAD MODEL
+// ==============================
 
-    async function loadModel() {
+async function loadModel() {
 
-        try {
+    try {
 
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
+        const modelURL =
+            MODEL_URL + "model.json";
 
-            model = await tmImage.load(
-                modelURL,
-                metadataURL
-            );
+        const metadataURL =
+            MODEL_URL + "metadata.json";
 
-            maxPredictions =
-                model.getTotalClasses();
+        model = await tmImage.load(
+            modelURL,
+            metadataURL
+        );
 
-            document.getElementById("status").innerText =
-                "✅ AI Model Ready";
+        document.getElementById("status").innerText =
+            "✅ AI Model Ready";
 
-        } catch (error) {
+    } catch (error) {
 
-            console.error(error);
+        console.error(error);
 
-            document.getElementById("status").innerText =
-                "❌ Model could not be loaded.";
+        document.getElementById("status").innerText =
+            "❌ Model could not be loaded.";
 
-        }
+    }
+}
+
+
+// ==============================
+// START CAMERA
+// ==============================
+
+async function startCamera() {
+
+    if (!model) {
+        alert("AI model is still loading. Please wait.");
+        return;
     }
 
+    if (cameraRunning) {
+        return;
+    }
 
-    // ==============================
-    // START CAMERA
-    // ==============================
+    try {
 
-    async function startCamera() {
+        document.getElementById("webcam-container").innerHTML = "";
+
+        webcam = new tmImage.Webcam(
+            320,
+            320,
+            true
+        );
+
+        await webcam.setup();
+        await webcam.play();
+
+        cameraRunning = true;
+
+        document
+            .getElementById("webcam-container")
+            .appendChild(webcam.canvas);
+
+        document.getElementById("captureBtn").disabled = false;
+        document.getElementById("retakeBtn").disabled = true;
+        document.getElementById("confirmBtn").disabled = true;
+
+        document.getElementById("status").innerText =
+            "📷 Camera ready. Place the waste item in front of the camera.";
+
+        cameraLoop();
+
+    } catch (error) {
+
+        alert(
+            "Camera access नहीं मिला। Browser में camera permission allow करो."
+        );
+
+        console.error(error);
+    }
+}
+
+
+// ==============================
+// CAMERA LOOP
+// IMPORTANT:
+// NO AI PREDICTION HERE
+// ==============================
+
+function cameraLoop() {
+
+    if (!cameraRunning) {
+        return;
+    }
+
+    webcam.update();
+
+    requestAnimationFrame(cameraLoop);
+}
+
+
+// ==============================
+// CAPTURE PHOTO
+// ==============================
+
+function capturePhoto() {
+
+    if (!webcam || !cameraRunning) {
+        return;
+    }
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.width =
+        webcam.canvas.width;
+
+    canvas.height =
+        webcam.canvas.height;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.drawImage(
+        webcam.canvas,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    capturedImage = canvas;
+
+    webcam.stop();
+
+    cameraRunning = false;
+
+    document
+        .getElementById("webcam-container")
+        .innerHTML = "";
+
+    document
+        .getElementById("webcam-container")
+        .appendChild(canvas);
+
+    document.getElementById("captureBtn").disabled = true;
+    document.getElementById("retakeBtn").disabled = false;
+    document.getElementById("confirmBtn").disabled = false;
+
+    document.getElementById("status").innerText =
+        "📸 Photo captured. Check the photo and confirm.";
+}
+
+
+// ==============================
+// RETAKE PHOTO
+// ==============================
+
+function retakePhoto() {
+
+    capturedImage = null;
+
+    document
+        .getElementById("webcam-container")
+        .innerHTML = "";
+
+    document.getElementById("retakeBtn").disabled = true;
+    document.getElementById("confirmBtn").disabled = true;
+
+    startCamera();
+}
+
+
+// ==============================
+// CONFIRM CAMERA SCAN
+// ==============================
+
+async function confirmScan() {
+
+    if (!capturedImage || !model) {
+        return;
+    }
+
+    document.getElementById("status").innerText =
+        "🤖 AI is analyzing the confirmed photo...";
+
+    await predict(capturedImage, true);
+
+    document.getElementById("confirmBtn").disabled = true;
+    document.getElementById("retakeBtn").disabled = true;
+
+    document.getElementById("status").innerText =
+        "✅ Scan confirmed.";
+}
+
+
+// ==============================
+// IMAGE UPLOAD
+// ==============================
+
+function handleImage(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const image =
+        document.getElementById("uploaded-image");
+
+    image.src =
+        window.URL.createObjectURL(file);
+
+    image.style.display =
+        "block";
+
+    image.onload = async function () {
 
         if (!model) {
-            alert("AI model is still loading. Please wait.");
+            alert("AI model is still loading.");
             return;
         }
 
-        if (cameraRunning) {
-            return;
-        }
+        document.getElementById("status").innerText =
+            "🤖 AI is analyzing the uploaded image...";
 
-        try {
+        await predict(image, true);
 
-            const flip = true;
-
-            webcam = new tmImage.Webcam(
-                320,
-                320,
-                flip
-            );
-
-            await webcam.setup();
-            await webcam.play();
-
-            cameraRunning = true;
-
-            document
-                .getElementById("webcam-container")
-                .appendChild(webcam.canvas);
-
-            window.requestAnimationFrame(cameraLoop);
-
-        } catch (error) {
-
-            alert(
-                "Camera access नहीं मिला। Browser में camera permission allow करो."
-            );
-
-            console.error(error);
-        }
-    }
+        document.getElementById("status").innerText =
+            "✅ Image scan complete.";
+    };
+}
 
 
-    // ==============================
-    // CAMERA LOOP
-    // ==============================
+// ==============================
+// AI PREDICTION
+// ==============================
 
-    async function cameraLoop() {
+async function predict(
+    imageElement,
+    shouldCount
+) {
 
-        if (!cameraRunning) {
-            return;
-        }
+    const prediction =
+        await model.predict(imageElement);
 
-        webcam.update();
+    let highestProbability = 0;
+    let detectedClass = "Unknown";
 
-        await predict(webcam.canvas);
-        //one scan completed
-        camerarunning = false;
-        webcam.stop();
-    }
+    for (
+        let i = 0;
+        i < prediction.length;
+        i++
+    ) {
 
-    // ==============================
-    // IMAGE UPLOAD
-    // ==============================
+        const probability =
+            prediction[i].probability;
 
-    function handleImage(event) {
-
-        const file =
-            event.target.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        const image =
-            document.getElementById("uploaded-image");
-
-        image.src =
-            URL.createObjectURL(file);
-
-        image.style.display = "block";
-
-        image.onload = async function () {
-
-            if (!model) {
-                alert("AI model is still loading.");
-                return;
-            }
-
-            await predict(image);
-        };
-    }
-
-
-    // ==============================
-    // AI PREDICTION
-    // ==============================
-
-    async function predict(imageElement) {
-
-        const prediction =
-            await model.predict(imageElement);
-
-        let highestProbability = 0;
-        let detectedClass = "Unknown";
-
-        for (let i = 0; i < prediction.length; i++) {
-
-            const probability =
-                prediction[i].probability;
-
-            if (probability > highestProbability) {
-
-                highestProbability =
-                    probability;
-
-                detectedClass =
-                    prediction[i].className;
-            }
-        }
-
-        showResult(
-            detectedClass,
+        if (
+            probability >
             highestProbability
-        );
-    }
-
-
-    // ==============================
-    // DISPLAY RESULT
-    // ==============================
-
-    function showResult(className, probability) {
-
-        const name =
-            className.toLowerCase();
-
-        document.getElementById("detected").innerText =
-            "♻️ " + className;
-
-        document.getElementById("confidence").innerText =
-            "AI Confidence: " +
-            (probability * 100).toFixed(1) +
-            "%";
-
-
-        let recycling = "";
-        let disposal = "";
-        let environment = "";
-
-
-        if (name.includes("plastic")) {
-
-            recycling =
-                "Generally recyclable. Check local recycling rules.";
-
-            disposal =
-                "Place in the designated plastic/recyclable waste bin.";
-
-            environment =
-                "Recycling plastic can reduce the amount of plastic entering landfills.";
-            counts.plstic++;
-
-             }
-
-        else if (name.includes("paper")) {
-
-            recycling =
-                "Clean and dry paper is generally recyclable.";
-
-            disposal =
-                "Place in the paper/recyclable waste bin.";
-
-            environment =
-                "Paper recycling helps reduce the demand for new raw materials.";
-            counts.paper++;
-
-        }
-
-        else if (name.includes("glass")) {
-
-            recycling =
-                "Glass containers are commonly recyclable.";
-
-            disposal =
-                "Place in the designated glass/recyclable waste collection.";
-
-            environment =
-                "Glass can often be recycled repeatedly.";
-            counts.glass++;
-  }
-
-        else if (name.includes("metal")) {
-
-            recycling =
-                "Many metal containers are recyclable.";
-
-            disposal =
-                "Place clean metal items in the appropriate recyclable waste stream.";
-
-            environment =
-                "Recycling metals can conserve raw materials and energy.";
-
-            counts.metal++;
-
-        }
-
-        else if (
-            name.includes("organic") ||
-            name.includes("food")
         ) {
 
-            recycling =
-                "Organic waste can often be composted.";
+            highestProbability =
+                probability;
 
-            disposal =
-                "Place it in the organic/biodegradable waste stream.";
+            detectedClass =
+                prediction[i].className;
+        }
+    }
 
-            environment =
-                "Composting organic waste can reduce landfill waste.";
-            
-            counts.organic++;
+    showResult(
+        detectedClass,
+        highestProbability,
+        shouldCount
+    );
+}
 
-              }
 
-        else {
+// ==============================
+// SHOW RESULT
+// ==============================
 
-            recycling =
-                "Check local waste-management guidelines.";
+function showResult(
+    className,
+    probability,
+    shouldCount
+) {
 
-            disposal =
-                "Use the waste category recommended by your local authority.";
+    const name =
+        className.toLowerCase();
 
-            environment =
-                "Correct segregation helps improve waste management.";
+    document.getElementById("detected").innerText =
+        "♻️ " + className;
 
+    document.getElementById("confidence").innerText =
+        "AI Confidence: " +
+        (probability * 100).toFixed(1) +
+        "%";
+
+
+    let recycling = "";
+    let disposal = "";
+    let environment = "";
+
+
+    if (name.includes("plastic")) {
+
+        recycling =
+            "Generally recyclable. Check local recycling rules.";
+
+        disposal =
+            "Place in the designated plastic/recyclable waste bin.";
+
+        environment =
+            "Recycling plastic can reduce waste entering landfills.";
+
+        if (shouldCount) {
+            counts.plastic++;
         }
 
+    }
 
-        document.getElementById("recycling").innerText =
-            recycling;
+    else if (name.includes("paper")) {
 
-        document.getElementById("disposal").innerText =
-            disposal;
+        recycling =
+            "Clean and dry paper is generally recyclable.";
 
-        document.getElementById("environment").innerText =
-            environment;
+        disposal =
+            "Place in the paper/recyclable waste bin.";
 
+        environment =
+            "Paper recycling helps reduce the demand for new raw materials.";
 
-        updateDashboard();
+        if (shouldCount) {
+            counts.paper++;
+        }
+
+    }
+
+    else if (name.includes("glass")) {
+
+        recycling =
+            "Glass containers are commonly recyclable.";
+
+        disposal =
+            "Place in the designated glass/recyclable waste collection.";
+
+        environment =
+            "Glass can often be recycled repeatedly.";
+
+        if (shouldCount) {
+            counts.glass++;
+        }
+
+    }
+
+    else if (name.includes("metal")) {
+
+        recycling =
+            "Many metal containers are recyclable.";
+
+        disposal =
+            "Place clean metal items in the appropriate recyclable waste stream.";
+
+        environment =
+            "Recycling metals can conserve raw materials and energy.";
+
+        if (shouldCount) {
+            counts.metal++;
+        }
+
+    }
+
+    else if (
+        name.includes("organic") ||
+        name.includes("food")
+    ) {
+
+        recycling =
+            "Organic waste can often be composted.";
+
+        disposal =
+            "Place it in the organic/biodegradable waste stream.";
+
+        environment =
+            "Composting organic waste can reduce landfill waste.";
+
+        if (shouldCount) {
+            counts.organic++;
+        }
+
+    }
+
+    else {
+
+        recycling =
+            "Check local waste-management guidelines.";
+
+        disposal =
+            "Use the waste category recommended by your local authority.";
+
+        environment =
+            "Correct segregation helps improve waste management.";
+
     }
 
 
-    // ==============================
-    // DASHBOARD
-    // ==============================
+    document.getElementById("recycling").innerText =
+        recycling;
 
-    function updateDashboard() {
+    document.getElementById("disposal").innerText =
+        disposal;
 
-        document.getElementById("plasticCount").innerText =
-            counts.plastic;
+    document.getElementById("environment").innerText =
+        environment;
 
-        document.getElementById("paperCount").innerText =
-            counts.paper;
-
-        document.getElementById("glassCount").innerText =
-            counts.glass;
-
-        document.getElementById("metalCount").innerText =
-            counts.metal;
-
-        document.getElementById("organicCount").innerText =
-            counts.organic;
-    }
+    updateDashboard();
+}
 
 
-    // ==============================
-    // START MODEL
-    // ==============================
+// ==============================
+// DASHBOARD
+// ==============================
 
-    loadModel();
+function updateDashboard() {
+
+    document.getElementById("plasticCount").innerText =
+        counts.plastic;
+
+    document.getElementById("paperCount").innerText =
+        counts.paper;
+
+    document.getElementById("glassCount").innerText =
+        counts.glass;
+
+    document.getElementById("metalCount").innerText =
+        counts.metal;
+
+    document.getElementById("organicCount").innerText =
+        counts.organic;
+}
+
+
+// ==============================
+// START
+// ==============================
+
+loadModel();
 
 </script>
 
