@@ -654,14 +654,17 @@ function showResult(
     let environment = "";
 
 
+    // ==============================
     // PLASTIC
+    // ==============================
+
     if (name.includes("plastic")) {
 
         recycling =
             "Generally recyclable. Check local recycling rules.";
 
         disposal =
-            "🔵 Blue Bin — Recyclable Waste";
+            "🟨 Yellow Bin — Plastic Waste";
 
         environment =
             "Recycling plastic can reduce waste entering landfills.";
@@ -670,14 +673,17 @@ function showResult(
     }
 
 
+    // ==============================
     // PAPER
+    // ==============================
+
     else if (name.includes("paper")) {
 
         recycling =
             "Clean and dry paper is generally recyclable.";
 
         disposal =
-            "🔵 Blue Bin — Recyclable Waste";
+            "🟦 Blue Bin — Paper Waste";
 
         environment =
             "Paper recycling helps reduce the demand for new raw materials.";
@@ -686,14 +692,17 @@ function showResult(
     }
 
 
+    // ==============================
     // GLASS
+    // ==============================
+
     else if (name.includes("glass")) {
 
         recycling =
             "Glass containers are commonly recyclable.";
 
         disposal =
-            "🔵 Blue Bin — Recyclable Waste";
+            "⬜ White/Grey Bin — Glass Waste";
 
         environment =
             "Glass can often be recycled repeatedly.";
@@ -702,14 +711,17 @@ function showResult(
     }
 
 
+    // ==============================
     // METAL
+    // ==============================
+
     else if (name.includes("metal")) {
 
         recycling =
             "Many metal containers are recyclable.";
 
         disposal =
-            "🔵 Blue Bin — Recyclable Waste";
+            "🟥 Red Bin — Metal Waste";
 
         environment =
             "Recycling metals can conserve raw materials and energy.";
@@ -718,7 +730,10 @@ function showResult(
     }
 
 
+    // ==============================
     // ORGANIC
+    // ==============================
+
     else if (
         name.includes("organic") ||
         name.includes("food")
@@ -728,7 +743,7 @@ function showResult(
             "Organic waste can often be composted.";
 
         disposal =
-            "🟢 Green Bin — Organic/Biodegradable Waste";
+            "🟩 Green Bin — Organic/Biodegradable Waste";
 
         environment =
             "Composting organic waste can reduce landfill waste.";
@@ -737,7 +752,10 @@ function showResult(
     }
 
 
+    // ==============================
     // UNKNOWN
+    // ==============================
+
     else {
 
         recycling =
