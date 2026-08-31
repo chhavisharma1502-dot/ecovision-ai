@@ -66,6 +66,7 @@ header p {
 
 .hero p {
     color: #607568;
+    line-height: 1.5;
 }
 
 .buttons {
@@ -86,6 +87,11 @@ button,
     cursor: pointer;
     background: #176b45;
     color: white;
+}
+
+button:hover,
+.upload-label:hover {
+    background: #125637;
 }
 
 button:disabled {
@@ -145,7 +151,12 @@ input[type="file"] {
 }
 
 .info-box p {
-    margin: 8px 0;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+#disposal {
+    font-weight: bold;
 }
 
 .dashboard {
@@ -181,6 +192,7 @@ input[type="file"] {
 #status {
     margin-top: 15px;
     color: #607568;
+    font-weight: bold;
 }
 
 footer {
@@ -243,17 +255,20 @@ footer {
 
     </div>
 
-    <p id="status">Model is loading...</p>
+    <p id="status">⏳ Loading AI model...</p>
 
 </section>
+
 
 <section id="camera-area">
     <div id="webcam-container"></div>
 </section>
 
+
 <section id="image-area">
     <img id="uploaded-image" alt="Uploaded waste">
 </section>
+
 
 <section class="result">
 
@@ -287,6 +302,7 @@ footer {
     </div>
 
 </section>
+
 
 <section class="dashboard">
 
@@ -325,19 +341,31 @@ footer {
 
 </div>
 
+
 <footer>
     EcoVision AI © 2026 | AI for Sustainable Waste Management
 </footer>
 
+
 <script>
 
-const MODEL_URL =
-   https://teachablemachine.withgoogle.com/models/7DcyIRnf_/;
+/* =========================================
+   NEW TEACHABLE MACHINE MODEL
+   ========================================= */
 
-let model;
-let webcam;
+const MODEL_URL =
+    "https://teachablemachine.withgoogle.com/models/7DcyIRnf_/";
+
+
+let model = null;
+let webcam = null;
 let cameraRunning = false;
 let capturedImage = null;
+
+
+/* =========================================
+   DASHBOARD COUNTS
+   ========================================= */
 
 let counts = {
     plastic: 0,
@@ -348,9 +376,9 @@ let counts = {
 };
 
 
-// ==============================
-// LOAD MODEL
-// ==============================
+/* =========================================
+   LOAD AI MODEL
+   ========================================= */
 
 async function loadModel() {
 
@@ -375,20 +403,23 @@ async function loadModel() {
         console.error(error);
 
         document.getElementById("status").innerText =
-            "❌ Model could not be loaded.";
-
+            "❌ AI Model could not be loaded.";
     }
 }
 
 
-// ==============================
-// START CAMERA
-// ==============================
+/* =========================================
+   START CAMERA
+   ========================================= */
 
 async function startCamera() {
 
     if (!model) {
-        alert("AI model is still loading. Please wait.");
+
+        alert(
+            "AI model is still loading. Please wait."
+        );
+
         return;
     }
 
@@ -398,7 +429,14 @@ async function startCamera() {
 
     try {
 
-        document.getElementById("webcam-container").innerHTML = "";
+        document.getElementById(
+            "webcam-container"
+        ).innerHTML = "";
+
+        const uploadedImage =
+            document.getElementById("uploaded-image");
+
+        uploadedImage.style.display = "none";
 
         webcam = new tmImage.Webcam(
             320,
@@ -415,30 +453,41 @@ async function startCamera() {
             .getElementById("webcam-container")
             .appendChild(webcam.canvas);
 
-        document.getElementById("captureBtn").disabled = false;
-        document.getElementById("retakeBtn").disabled = true;
-        document.getElementById("confirmBtn").disabled = true;
+        document.getElementById(
+            "captureBtn"
+        ).disabled = false;
 
-        document.getElementById("status").innerText =
+        document.getElementById(
+            "retakeBtn"
+        ).disabled = true;
+
+        document.getElementById(
+            "confirmBtn"
+        ).disabled = true;
+
+        document.getElementById(
+            "status"
+        ).innerText =
             "📷 Camera ready. Place the waste item in front of the camera.";
 
         cameraLoop();
 
     } catch (error) {
 
-        alert(
-            "Camera access नहीं मिला। Browser में camera permission allow करो."
-        );
-
         console.error(error);
+
+        alert(
+            "Camera access nahi mila. Browser mein camera permission allow karo."
+        );
     }
 }
 
 
-// ==============================
-// CAMERA LOOP
-// NO CONTINUOUS AI PREDICTION
-// ==============================
+/* =========================================
+   CAMERA LOOP
+   ONLY SHOWS CAMERA
+   NO CONTINUOUS PREDICTION
+   ========================================= */
 
 function cameraLoop() {
 
@@ -448,13 +497,15 @@ function cameraLoop() {
 
     webcam.update();
 
-    requestAnimationFrame(cameraLoop);
+    requestAnimationFrame(
+        cameraLoop
+    );
 }
 
 
-// ==============================
-// CAPTURE PHOTO
-// ==============================
+/* =========================================
+   CAPTURE PHOTO
+   ========================================= */
 
 function capturePhoto() {
 
@@ -488,45 +539,60 @@ function capturePhoto() {
 
     cameraRunning = false;
 
-    document
-        .getElementById("webcam-container")
-        .innerHTML = "";
+    document.getElementById(
+        "webcam-container"
+    ).innerHTML = "";
 
     document
         .getElementById("webcam-container")
         .appendChild(canvas);
 
-    document.getElementById("captureBtn").disabled = true;
-    document.getElementById("retakeBtn").disabled = false;
-    document.getElementById("confirmBtn").disabled = false;
+    document.getElementById(
+        "captureBtn"
+    ).disabled = true;
 
-    document.getElementById("status").innerText =
-        "📸 Photo captured. Check the photo and confirm.";
+    document.getElementById(
+        "retakeBtn"
+    ).disabled = false;
+
+    document.getElementById(
+        "confirmBtn"
+    ).disabled = false;
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "📸 Photo captured. Check it and click Confirm Scan.";
 }
 
 
-// ==============================
-// RETAKE
-// ==============================
+/* =========================================
+   RETAKE PHOTO
+   ========================================= */
 
 function retakePhoto() {
 
     capturedImage = null;
 
-    document
-        .getElementById("webcam-container")
-        .innerHTML = "";
+    document.getElementById(
+        "webcam-container"
+    ).innerHTML = "";
 
-    document.getElementById("retakeBtn").disabled = true;
-    document.getElementById("confirmBtn").disabled = true;
+    document.getElementById(
+        "retakeBtn"
+    ).disabled = true;
+
+    document.getElementById(
+        "confirmBtn"
+    ).disabled = true;
 
     startCamera();
 }
 
 
-// ==============================
-// CONFIRM SCAN
-// ==============================
+/* =========================================
+   CONFIRM SCAN
+   ========================================= */
 
 async function confirmScan() {
 
@@ -534,22 +600,33 @@ async function confirmScan() {
         return;
     }
 
-    document.getElementById("status").innerText =
+    document.getElementById(
+        "status"
+    ).innerText =
         "🤖 AI is analyzing the confirmed photo...";
 
-    await predict(capturedImage);
+    await predict(
+        capturedImage
+    );
 
-    document.getElementById("confirmBtn").disabled = true;
-    document.getElementById("retakeBtn").disabled = true;
+    document.getElementById(
+        "confirmBtn"
+    ).disabled = true;
 
-    document.getElementById("status").innerText =
-        "✅ Scan confirmed.";
+    document.getElementById(
+        "retakeBtn"
+    ).disabled = true;
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "✅ Scan confirmed successfully.";
 }
 
 
-// ==============================
-// IMAGE UPLOAD
-// ==============================
+/* =========================================
+   IMAGE UPLOAD
+   ========================================= */
 
 function handleImage(event) {
 
@@ -560,8 +637,21 @@ function handleImage(event) {
         return;
     }
 
+    if (cameraRunning && webcam) {
+
+        webcam.stop();
+
+        cameraRunning = false;
+    }
+
+    document.getElementById(
+        "webcam-container"
+    ).innerHTML = "";
+
     const image =
-        document.getElementById("uploaded-image");
+        document.getElementById(
+            "uploaded-image"
+        );
 
     image.src =
         window.URL.createObjectURL(file);
@@ -572,65 +662,89 @@ function handleImage(event) {
     image.onload = async function () {
 
         if (!model) {
-            alert("AI model is still loading.");
+
+            alert(
+                "AI model is still loading."
+            );
+
             return;
         }
 
-        document.getElementById("status").innerText =
+        document.getElementById(
+            "status"
+        ).innerText =
             "🤖 AI is analyzing the uploaded image...";
 
         await predict(image);
 
-        document.getElementById("status").innerText =
+        document.getElementById(
+            "status"
+        ).innerText =
             "✅ Image scan complete.";
     };
 }
 
 
-// ==============================
-// PREDICTION
-// ==============================
+/* =========================================
+   AI PREDICTION
+   ========================================= */
 
 async function predict(imageElement) {
 
-    const prediction =
-        await model.predict(imageElement);
+    try {
 
-    let highestProbability = 0;
-    let detectedClass = "Unknown";
+        const prediction =
+            await model.predict(
+                imageElement
+            );
 
-    for (
-        let i = 0;
-        i < prediction.length;
-        i++
-    ) {
+        let highestProbability = 0;
 
-        const probability =
-            prediction[i].probability;
+        let detectedClass =
+            "Unknown";
 
-        if (
-            probability >
-            highestProbability
+        for (
+            let i = 0;
+            i < prediction.length;
+            i++
         ) {
 
-            highestProbability =
-                probability;
+            const probability =
+                prediction[i].probability;
 
-            detectedClass =
-                prediction[i].className;
+            if (
+                probability >
+                highestProbability
+            ) {
+
+                highestProbability =
+                    probability;
+
+                detectedClass =
+                    prediction[i].className;
+            }
         }
-    }
 
-    showResult(
-        detectedClass,
-        highestProbability
-    );
+        showResult(
+            detectedClass,
+            highestProbability
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "❌ Error while analyzing image.";
+    }
 }
 
 
-// ==============================
-// SHOW RESULT
-// ==============================
+/* =========================================
+   SHOW RESULT
+   ========================================= */
 
 function showResult(
     className,
@@ -638,14 +752,24 @@ function showResult(
 ) {
 
     const name =
-        className.toLowerCase();
+        className
+            .toLowerCase()
+            .trim();
 
-    document.getElementById("detected").innerText =
+
+    document.getElementById(
+        "detected"
+    ).innerText =
         "♻️ " + className;
 
-    document.getElementById("confidence").innerText =
+
+    document.getElementById(
+        "confidence"
+    ).innerText =
         "AI Confidence: " +
-        (probability * 100).toFixed(1) +
+        (
+            probability * 100
+        ).toFixed(1) +
         "%";
 
 
@@ -654,30 +778,34 @@ function showResult(
     let environment = "";
 
 
-    // ==============================
-    // PLASTIC
-    // ==============================
+    /* =====================================
+       PLASTIC
+       ===================================== */
 
-    if (name.includes("plastic")) {
+    if (
+        name.includes("plastic")
+    ) {
 
         recycling =
-            "Generally recyclable. Check local recycling rules.";
+            "Plastic items may be recyclable depending on the type and local recycling rules.";
 
         disposal =
             "🟨 Yellow Bin — Plastic Waste";
 
         environment =
-            "Recycling plastic can reduce waste entering landfills.";
+            "Proper plastic segregation helps reduce plastic pollution.";
 
         counts.plastic++;
     }
 
 
-    // ==============================
-    // PAPER
-    // ==============================
+    /* =====================================
+       PAPER
+       ===================================== */
 
-    else if (name.includes("paper")) {
+    else if (
+        name.includes("paper")
+    ) {
 
         recycling =
             "Clean and dry paper is generally recyclable.";
@@ -686,57 +814,62 @@ function showResult(
             "🟦 Blue Bin — Paper Waste";
 
         environment =
-            "Paper recycling helps reduce the demand for new raw materials.";
+            "Paper recycling helps reduce the need for new raw materials.";
 
         counts.paper++;
     }
 
 
-    // ==============================
-    // GLASS
-    // ==============================
+    /* =====================================
+       GLASS
+       ===================================== */
 
-    else if (name.includes("glass")) {
+    else if (
+        name.includes("glass")
+    ) {
 
         recycling =
-            "Glass containers are commonly recyclable.";
+            "Glass bottles and jars can commonly be recycled.";
 
         disposal =
             "⬜ White/Grey Bin — Glass Waste";
 
         environment =
-            "Glass can often be recycled repeatedly.";
+            "Glass can often be recycled multiple times.";
 
         counts.glass++;
     }
 
 
-    // ==============================
-    // METAL
-    // ==============================
+    /* =====================================
+       METAL
+       ===================================== */
 
-    else if (name.includes("metal")) {
+    else if (
+        name.includes("metal")
+    ) {
 
         recycling =
-            "Many metal containers are recyclable.";
+            "Many metal cans and containers are recyclable.";
 
         disposal =
             "🟥 Red Bin — Metal Waste";
 
         environment =
-            "Recycling metals can conserve raw materials and energy.";
+            "Metal recycling helps conserve raw materials and energy.";
 
         counts.metal++;
     }
 
 
-    // ==============================
-    // ORGANIC
-    // ==============================
+    /* =====================================
+       ORGANIC
+       ===================================== */
 
     else if (
         name.includes("organic") ||
-        name.includes("food")
+        name.includes("food") ||
+        name.includes("biodegradable")
     ) {
 
         recycling =
@@ -752,62 +885,85 @@ function showResult(
     }
 
 
-    // ==============================
-    // UNKNOWN
-    // ==============================
+    /* =====================================
+       UNKNOWN
+       ===================================== */
 
     else {
 
         recycling =
-            "Check local waste-management guidelines.";
+            "Please check local waste-management guidelines.";
 
         disposal =
-            "Use the waste category recommended by your local authority.";
+            "⚠️ Waste category not recognized.";
 
         environment =
-            "Correct segregation helps improve waste management.";
+            "Correct waste segregation helps improve recycling and waste management.";
     }
 
 
-    document.getElementById("recycling").innerText =
+    document.getElementById(
+        "recycling"
+    ).innerText =
         recycling;
 
-    document.getElementById("disposal").innerText =
+
+    document.getElementById(
+        "disposal"
+    ).innerText =
         disposal;
 
-    document.getElementById("environment").innerText =
+
+    document.getElementById(
+        "environment"
+    ).innerText =
         environment;
+
 
     updateDashboard();
 }
 
 
-// ==============================
-// DASHBOARD
-// ==============================
+/* =========================================
+   UPDATE DASHBOARD
+   ========================================= */
 
 function updateDashboard() {
 
-    document.getElementById("plasticCount").innerText =
+    document.getElementById(
+        "plasticCount"
+    ).innerText =
         counts.plastic;
 
-    document.getElementById("paperCount").innerText =
+
+    document.getElementById(
+        "paperCount"
+    ).innerText =
         counts.paper;
 
-    document.getElementById("glassCount").innerText =
+
+    document.getElementById(
+        "glassCount"
+    ).innerText =
         counts.glass;
 
-    document.getElementById("metalCount").innerText =
+
+    document.getElementById(
+        "metalCount"
+    ).innerText =
         counts.metal;
 
-    document.getElementById("organicCount").innerText =
+
+    document.getElementById(
+        "organicCount"
+    ).innerText =
         counts.organic;
 }
 
 
-// ==============================
-// START
-// ==============================
+/* =========================================
+   LOAD MODEL WHEN PAGE OPENS
+   ========================================= */
 
 loadModel();
 
