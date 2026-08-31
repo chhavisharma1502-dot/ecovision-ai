@@ -110,8 +110,7 @@ input[type="file"] {
     justify-content: center;
 }
 
-#webcam-container canvas,
-#captured-image {
+#webcam-container canvas {
     border-radius: 18px;
     max-width: 100%;
     width: 320px;
@@ -259,16 +258,13 @@ footer {
 
 </section>
 
-
 <section id="camera-area">
     <div id="webcam-container"></div>
 </section>
 
-
 <section id="image-area">
     <img id="uploaded-image" alt="Uploaded waste">
 </section>
-
 
 <section class="result">
 
@@ -302,7 +298,6 @@ footer {
     </div>
 
 </section>
-
 
 <section class="dashboard">
 
@@ -341,31 +336,23 @@ footer {
 
 </div>
 
-
 <footer>
     EcoVision AI © 2026 | AI for Sustainable Waste Management
 </footer>
 
-
 <script>
 
 /* =========================================
-   NEW TEACHABLE MACHINE MODEL
+   LATEST TEACHABLE MACHINE MODEL
    ========================================= */
 
 const MODEL_URL =
-    "https://teachablemachine.withgoogle.com/models/7DcyIRnf_/";
-
+    "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
 
 let model = null;
 let webcam = null;
 let cameraRunning = false;
 let capturedImage = null;
-
-
-/* =========================================
-   DASHBOARD COUNTS
-   ========================================= */
 
 let counts = {
     plastic: 0,
@@ -377,7 +364,7 @@ let counts = {
 
 
 /* =========================================
-   LOAD AI MODEL
+   LOAD MODEL
    ========================================= */
 
 async function loadModel() {
@@ -433,10 +420,9 @@ async function startCamera() {
             "webcam-container"
         ).innerHTML = "";
 
-        const uploadedImage =
-            document.getElementById("uploaded-image");
-
-        uploadedImage.style.display = "none";
+        document.getElementById(
+            "uploaded-image"
+        ).style.display = "none";
 
         webcam = new tmImage.Webcam(
             320,
@@ -468,7 +454,7 @@ async function startCamera() {
         document.getElementById(
             "status"
         ).innerText =
-            "📷 Camera ready. Place the waste item in front of the camera.";
+            "📷 Camera ready. Place waste in front of camera.";
 
         cameraLoop();
 
@@ -485,8 +471,6 @@ async function startCamera() {
 
 /* =========================================
    CAMERA LOOP
-   ONLY SHOWS CAMERA
-   NO CONTINUOUS PREDICTION
    ========================================= */
 
 function cameraLoop() {
@@ -497,9 +481,7 @@ function cameraLoop() {
 
     webcam.update();
 
-    requestAnimationFrame(
-        cameraLoop
-    );
+    requestAnimationFrame(cameraLoop);
 }
 
 
@@ -567,7 +549,7 @@ function capturePhoto() {
 
 
 /* =========================================
-   RETAKE PHOTO
+   RETAKE
    ========================================= */
 
 function retakePhoto() {
@@ -605,9 +587,7 @@ async function confirmScan() {
     ).innerText =
         "🤖 AI is analyzing the confirmed photo...";
 
-    await predict(
-        capturedImage
-    );
+    await predict(capturedImage);
 
     document.getElementById(
         "confirmBtn"
@@ -625,7 +605,7 @@ async function confirmScan() {
 
 
 /* =========================================
-   IMAGE UPLOAD
+   UPLOAD IMAGE
    ========================================= */
 
 function handleImage(event) {
@@ -640,7 +620,6 @@ function handleImage(event) {
     if (cameraRunning && webcam) {
 
         webcam.stop();
-
         cameraRunning = false;
     }
 
@@ -686,7 +665,7 @@ function handleImage(event) {
 
 
 /* =========================================
-   AI PREDICTION
+   PREDICTION
    ========================================= */
 
 async function predict(imageElement) {
@@ -699,9 +678,7 @@ async function predict(imageElement) {
             );
 
         let highestProbability = 0;
-
-        let detectedClass =
-            "Unknown";
+        let detectedClass = "Unknown";
 
         for (
             let i = 0;
@@ -756,12 +733,10 @@ function showResult(
             .toLowerCase()
             .trim();
 
-
     document.getElementById(
         "detected"
     ).innerText =
         "♻️ " + className;
-
 
     document.getElementById(
         "confidence"
@@ -782,12 +757,10 @@ function showResult(
        PLASTIC
        ===================================== */
 
-    if (
-        name.includes("plastic")
-    ) {
+    if (name.includes("plastic")) {
 
         recycling =
-            "Plastic items may be recyclable depending on the type and local recycling rules.";
+            "Plastic items may be recyclable depending on the type and local rules.";
 
         disposal =
             "🟨 Yellow Bin — Plastic Waste";
@@ -803,9 +776,7 @@ function showResult(
        PAPER
        ===================================== */
 
-    else if (
-        name.includes("paper")
-    ) {
+    else if (name.includes("paper")) {
 
         recycling =
             "Clean and dry paper is generally recyclable.";
@@ -824,9 +795,7 @@ function showResult(
        GLASS
        ===================================== */
 
-    else if (
-        name.includes("glass")
-    ) {
+    else if (name.includes("glass")) {
 
         recycling =
             "Glass bottles and jars can commonly be recycled.";
@@ -845,9 +814,7 @@ function showResult(
        METAL
        ===================================== */
 
-    else if (
-        name.includes("metal")
-    ) {
+    else if (name.includes("metal")) {
 
         recycling =
             "Many metal cans and containers are recyclable.";
@@ -898,7 +865,7 @@ function showResult(
             "⚠️ Waste category not recognized.";
 
         environment =
-            "Correct waste segregation helps improve recycling and waste management.";
+            "Correct waste segregation helps improve waste management.";
     }
 
 
@@ -907,25 +874,22 @@ function showResult(
     ).innerText =
         recycling;
 
-
     document.getElementById(
         "disposal"
     ).innerText =
         disposal;
-
 
     document.getElementById(
         "environment"
     ).innerText =
         environment;
 
-
     updateDashboard();
 }
 
 
 /* =========================================
-   UPDATE DASHBOARD
+   DASHBOARD
    ========================================= */
 
 function updateDashboard() {
@@ -935,24 +899,20 @@ function updateDashboard() {
     ).innerText =
         counts.plastic;
 
-
     document.getElementById(
         "paperCount"
     ).innerText =
         counts.paper;
-
 
     document.getElementById(
         "glassCount"
     ).innerText =
         counts.glass;
 
-
     document.getElementById(
         "metalCount"
     ).innerText =
         counts.metal;
-
 
     document.getElementById(
         "organicCount"
@@ -962,7 +922,7 @@ function updateDashboard() {
 
 
 /* =========================================
-   LOAD MODEL WHEN PAGE OPENS
+   START
    ========================================= */
 
 loadModel();
