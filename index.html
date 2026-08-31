@@ -110,10 +110,16 @@ input[type="file"] {
     justify-content: center;
 }
 
-#webcam-container canvas {
-    border-radius: 18px;
-    max-width: 100%;
+#camera-video,
+#captured-image {
     width: 320px;
+    max-width: 100%;
+    border-radius: 18px;
+    background: black;
+}
+
+#camera-video {
+    transform: none;
 }
 
 #uploaded-image {
@@ -216,14 +222,14 @@ footer {
     <h2>Identify Your Waste</h2>
 
     <p>
-        Capture a waste item using your camera or upload an image.
+        Capture a waste item using your back camera or upload an image.
         Confirm the scan before the AI gives the final result.
     </p>
 
     <div class="buttons">
 
         <button onclick="startCamera()">
-            📷 Start Camera
+            📷 Start Back Camera
         </button>
 
         <button id="captureBtn"
@@ -258,13 +264,26 @@ footer {
 
 </section>
 
+
 <section id="camera-area">
-    <div id="webcam-container"></div>
+
+    <video id="camera-video"
+           autoplay
+           playsinline
+           muted
+           style="display:none;">
+    </video>
+
 </section>
 
+
 <section id="image-area">
-    <img id="uploaded-image" alt="Uploaded waste">
+
+    <img id="uploaded-image"
+         alt="Uploaded waste">
+
 </section>
+
 
 <section class="result">
 
@@ -298,6 +317,7 @@ footer {
     </div>
 
 </section>
+
 
 <section class="dashboard">
 
@@ -336,9 +356,11 @@ footer {
 
 </div>
 
+
 <footer>
     EcoVision AI © 2026 | AI for Sustainable Waste Management
 </footer>
+
 
 <script>
 
@@ -349,10 +371,17 @@ footer {
 const MODEL_URL =
     "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
 
+
 let model = null;
-let webcam = null;
+let video = null;
+let stream = null;
 let cameraRunning = false;
 let capturedImage = null;
+
+
+/* =========================================
+   DASHBOARD COUNTS
+   ========================================= */
 
 let counts = {
     plastic: 0,
@@ -382,21 +411,25 @@ async function loadModel() {
             metadataURL
         );
 
-        document.getElementById("status").innerText =
+        document.getElementById(
+            "status"
+        ).innerText =
             "✅ AI Model Ready";
 
     } catch (error) {
 
         console.error(error);
 
-        document.getElementById("status").innerText =
+        document.getElementById(
+            "status"
+        ).innerText =
             "❌ AI Model could not be loaded.";
     }
 }
 
 
 /* =========================================
-   START CAMERA
+   START BACK CAMERA
    ========================================= */
 
 async function startCamera() {
@@ -416,28 +449,42 @@ async function startCamera() {
 
     try {
 
-        document.getElementById(
-            "webcam-container"
-        ).innerHTML = "";
+        video =
+            document.getElementById(
+                "camera-video"
+            );
 
-        document.getElementById(
-            "uploaded-image"
-        ).style.display = "none";
+        /*
+         * facingMode: environment
+         * = phone ka BACK camera
+         */
 
-        webcam = new tmImage.Webcam(
-            320,
-            320,
-            true
-        );
+        stream =
+            await navigator.mediaDevices.getUserMedia({
 
-        await webcam.setup();
-        await webcam.play();
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    },
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                },
+
+                audio: false
+            });
+
+
+        video.srcObject = stream;
+
+        video.style.display = "block";
+
+        await video.play();
 
         cameraRunning = true;
-
-        document
-            .getElementById("webcam-container")
-            .appendChild(webcam.canvas);
 
         document.getElementById(
             "captureBtn"
@@ -454,34 +501,16 @@ async function startCamera() {
         document.getElementById(
             "status"
         ).innerText =
-            "📷 Camera ready. Place waste in front of camera.";
-
-        cameraLoop();
+            "📷 Back camera ready. Place the waste item in front of the camera.";
 
     } catch (error) {
 
         console.error(error);
 
         alert(
-            "Camera access nahi mila. Browser mein camera permission allow karo."
+            "Back camera access nahi mila. Browser mein camera permission allow karo."
         );
     }
-}
-
-
-/* =========================================
-   CAMERA LOOP
-   ========================================= */
-
-function cameraLoop() {
-
-    if (!cameraRunning) {
-        return;
-    }
-
-    webcam.update();
-
-    requestAnimationFrame(cameraLoop);
 }
 
 
@@ -491,7 +520,7 @@ function cameraLoop() {
 
 function capturePhoto() {
 
-    if (!webcam || !cameraRunning) {
+    if (!video || !cameraRunning) {
         return;
     }
 
@@ -499,16 +528,16 @@ function capturePhoto() {
         document.createElement("canvas");
 
     canvas.width =
-        webcam.canvas.width;
+        video.videoWidth || 640;
 
     canvas.height =
-        webcam.canvas.height;
+        video.videoHeight || 480;
 
     const ctx =
         canvas.getContext("2d");
 
     ctx.drawImage(
-        webcam.canvas,
+        video,
         0,
         0,
         canvas.width,
@@ -517,17 +546,21 @@ function capturePhoto() {
 
     capturedImage = canvas;
 
-    webcam.stop();
+    stopCamera();
 
-    cameraRunning = false;
+    video.style.display = "none";
 
-    document.getElementById(
-        "webcam-container"
-    ).innerHTML = "";
+    const cameraArea =
+        document.getElementById(
+            "camera-area"
+        );
 
-    document
-        .getElementById("webcam-container")
-        .appendChild(canvas);
+    cameraArea.innerHTML = "";
+
+    canvas.id = "captured-image";
+
+    cameraArea.appendChild(canvas);
+
 
     document.getElementById(
         "captureBtn"
@@ -541,10 +574,32 @@ function capturePhoto() {
         "confirmBtn"
     ).disabled = false;
 
+
     document.getElementById(
         "status"
     ).innerText =
         "📸 Photo captured. Check it and click Confirm Scan.";
+}
+
+
+/* =========================================
+   STOP CAMERA
+   ========================================= */
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(
+                track => track.stop()
+            );
+
+        stream = null;
+    }
+
+    cameraRunning = false;
 }
 
 
@@ -557,8 +612,18 @@ function retakePhoto() {
     capturedImage = null;
 
     document.getElementById(
-        "webcam-container"
-    ).innerHTML = "";
+        "camera-area"
+    ).innerHTML =
+        `
+        <video
+            id="camera-video"
+            autoplay
+            playsinline
+            muted
+            style="display:none;">
+        </video>
+        `;
+
 
     document.getElementById(
         "retakeBtn"
@@ -567,6 +632,7 @@ function retakePhoto() {
     document.getElementById(
         "confirmBtn"
     ).disabled = true;
+
 
     startCamera();
 }
@@ -587,7 +653,11 @@ async function confirmScan() {
     ).innerText =
         "🤖 AI is analyzing the confirmed photo...";
 
-    await predict(capturedImage);
+
+    await predict(
+        capturedImage
+    );
+
 
     document.getElementById(
         "confirmBtn"
@@ -596,6 +666,7 @@ async function confirmScan() {
     document.getElementById(
         "retakeBtn"
     ).disabled = true;
+
 
     document.getElementById(
         "status"
@@ -617,58 +688,68 @@ function handleImage(event) {
         return;
     }
 
-    if (cameraRunning && webcam) {
+    stopCamera();
 
-        webcam.stop();
-        cameraRunning = false;
-    }
+    const cameraArea =
+        document.getElementById(
+            "camera-area"
+        );
 
-    document.getElementById(
-        "webcam-container"
-    ).innerHTML = "";
+    cameraArea.innerHTML = "";
+
 
     const image =
         document.getElementById(
             "uploaded-image"
         );
 
+
     image.src =
-        window.URL.createObjectURL(file);
+        window.URL.createObjectURL(
+            file
+        );
 
     image.style.display =
         "block";
 
-    image.onload = async function () {
 
-        if (!model) {
+    image.onload =
+        async function () {
 
-            alert(
-                "AI model is still loading."
-            );
+            if (!model) {
 
-            return;
-        }
+                alert(
+                    "AI model is still loading."
+                );
 
-        document.getElementById(
-            "status"
-        ).innerText =
-            "🤖 AI is analyzing the uploaded image...";
+                return;
+            }
 
-        await predict(image);
 
-        document.getElementById(
-            "status"
-        ).innerText =
-            "✅ Image scan complete.";
-    };
+            document.getElementById(
+                "status"
+            ).innerText =
+                "🤖 AI is analyzing the uploaded image...";
+
+
+            await predict(image);
+
+
+            document.getElementById(
+                "status"
+            ).innerText =
+                "✅ Image scan complete.";
+        };
 }
 
 
 /* =========================================
-   PREDICTION
+   AI PREDICTION
    ========================================= */
 
-async function predict(imageElement) {
+async function predict(
+    imageElement
+) {
 
     try {
 
@@ -677,8 +758,12 @@ async function predict(imageElement) {
                 imageElement
             );
 
+
         let highestProbability = 0;
-        let detectedClass = "Unknown";
+
+        let detectedClass =
+            "Unknown";
+
 
         for (
             let i = 0;
@@ -688,6 +773,7 @@ async function predict(imageElement) {
 
             const probability =
                 prediction[i].probability;
+
 
             if (
                 probability >
@@ -702,10 +788,12 @@ async function predict(imageElement) {
             }
         }
 
+
         showResult(
             detectedClass,
             highestProbability
         );
+
 
     } catch (error) {
 
@@ -733,10 +821,12 @@ function showResult(
             .toLowerCase()
             .trim();
 
+
     document.getElementById(
         "detected"
     ).innerText =
         "♻️ " + className;
+
 
     document.getElementById(
         "confidence"
@@ -757,7 +847,9 @@ function showResult(
        PLASTIC
        ===================================== */
 
-    if (name.includes("plastic")) {
+    if (
+        name.includes("plastic")
+    ) {
 
         recycling =
             "Plastic items may be recyclable depending on the type and local rules.";
@@ -776,7 +868,9 @@ function showResult(
        PAPER
        ===================================== */
 
-    else if (name.includes("paper")) {
+    else if (
+        name.includes("paper")
+    ) {
 
         recycling =
             "Clean and dry paper is generally recyclable.";
@@ -795,7 +889,9 @@ function showResult(
        GLASS
        ===================================== */
 
-    else if (name.includes("glass")) {
+    else if (
+        name.includes("glass")
+    ) {
 
         recycling =
             "Glass bottles and jars can commonly be recycled.";
@@ -814,7 +910,9 @@ function showResult(
        METAL
        ===================================== */
 
-    else if (name.includes("metal")) {
+    else if (
+        name.includes("metal")
+    ) {
 
         recycling =
             "Many metal cans and containers are recyclable.";
@@ -874,22 +972,25 @@ function showResult(
     ).innerText =
         recycling;
 
+
     document.getElementById(
         "disposal"
     ).innerText =
         disposal;
+
 
     document.getElementById(
         "environment"
     ).innerText =
         environment;
 
+
     updateDashboard();
 }
 
 
 /* =========================================
-   DASHBOARD
+   UPDATE DASHBOARD
    ========================================= */
 
 function updateDashboard() {
@@ -899,20 +1000,24 @@ function updateDashboard() {
     ).innerText =
         counts.plastic;
 
+
     document.getElementById(
         "paperCount"
     ).innerText =
         counts.paper;
+
 
     document.getElementById(
         "glassCount"
     ).innerText =
         counts.glass;
 
+
     document.getElementById(
         "metalCount"
     ).innerText =
         counts.metal;
+
 
     document.getElementById(
         "organicCount"
@@ -922,7 +1027,7 @@ function updateDashboard() {
 
 
 /* =========================================
-   START
+   LOAD MODEL
    ========================================= */
 
 loadModel();
