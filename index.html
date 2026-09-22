@@ -1,37 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>EcoVision AI</title>
 
+<!-- TensorFlow -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
+<!-- Teachable Machine -->
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
+
 <style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    background: #f1f8f4;
+    background:
+        linear-gradient(135deg, #eef9f2, #f7fbf8);
     color: #183b2a;
+    min-height: 100vh;
 }
 
+
+/* =====================================================
+   HEADER
+===================================================== */
+
 header {
-    background: #176b45;
+    background:
+        linear-gradient(135deg, #176b45, #0d5134);
+
     color: white;
-    padding: 25px 20px;
+
+    padding: 32px 20px;
+
     text-align: center;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 header h1 {
-    font-size: 32px;
+    font-size: 36px;
     margin-bottom: 8px;
+    letter-spacing: 0.5px;
 }
 
 header p {
@@ -39,362 +71,1110 @@ header p {
     opacity: 0.9;
 }
 
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
 .container {
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1100px;
     margin: auto;
-    padding: 25px 15px;
+    padding: 28px 18px 40px;
 }
+
+
+/* =====================================================
+   COMMON CARDS
+===================================================== */
 
 .hero,
+.camera-card,
 .result,
-.stat {
+.dashboard {
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 10px 35px rgba(24, 59, 42, 0.09);
+
+    border: 1px solid rgba(23, 107, 69, 0.08);
 }
 
+
+/* =====================================================
+   HERO
+===================================================== */
+
 .hero {
-    padding: 25px;
+    padding: 30px 25px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .hero h2 {
-    font-size: 25px;
+    font-size: 28px;
     margin-bottom: 10px;
+    color: #164b32;
 }
 
 .hero p {
     color: #607568;
-    line-height: 1.5;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: auto;
 }
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
 
 .buttons {
     display: flex;
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 24px;
 }
 
 button,
 .upload-label {
     border: none;
-    border-radius: 12px;
-    padding: 13px 22px;
+
+    border-radius: 14px;
+
+    padding: 14px 22px;
+
     font-size: 15px;
-    font-weight: bold;
+
+    font-weight: 700;
+
     cursor: pointer;
-    background: #176b45;
+
+    background:
+        linear-gradient(135deg, #176b45, #218653);
+
     color: white;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+    box-shadow:
+        0 7px 18px rgba(23, 107, 69, 0.18);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 button:hover,
 .upload-label:hover {
-    background: #125637;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 22px rgba(23, 107, 69, 0.25);
+
+    background:
+        linear-gradient(135deg, #125637, #176b45);
+}
+
+button:active,
+.upload-label:active {
+    transform: translateY(0);
 }
 
 button:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 input[type="file"] {
     display: none;
 }
 
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+#status {
+    margin-top: 20px;
+
+    display: inline-block;
+
+    padding: 10px 16px;
+
+    border-radius: 30px;
+
+    background: #eef7f1;
+
+    color: #176b45;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   CAMERA CARD
+===================================================== */
+
+.camera-card {
+    margin-top: 22px;
+    padding: 25px 18px 30px;
+    text-align: center;
+}
+
+.camera-title {
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    color: #164b32;
+}
+
+
+/* =====================================================
+   CAMERA AREA
+===================================================== */
+
 #camera-area,
 #image-area {
-    margin-top: 20px;
+
+    width: 100%;
+
+    margin: 0 auto;
+
     display: flex;
+
     justify-content: center;
+
+    align-items: center;
+
+    padding: 0 8px;
 }
+
+
+/* =====================================================
+   LARGE CAMERA
+===================================================== */
 
 #camera-video,
 #captured-image {
-    width: 320px;
+
+    width: min(760px, 100%);
+
     max-width: 100%;
-    border-radius: 18px;
-    background: black;
+
+    aspect-ratio: 16 / 9;
+
+    object-fit: cover;
+
+    border-radius: 24px;
+
+    background: #07130d;
+
+    border: 3px solid rgba(23, 107, 69, 0.14);
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.18);
+
+    display: block;
 }
 
-#camera-video {
-    transform: none;
-}
+
+/* =====================================================
+   UPLOADED IMAGE
+===================================================== */
 
 #uploaded-image {
-    max-width: 350px;
-    width: 100%;
-    border-radius: 18px;
+
+    width: min(760px, 100%);
+
+    max-width: 100%;
+
+    max-height: 600px;
+
+    object-fit: contain;
+
+    border-radius: 24px;
+
     display: none;
+
+    border: 3px solid rgba(23, 107, 69, 0.12);
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.15);
 }
 
+
+/* =====================================================
+   RESULT CARD
+===================================================== */
+
 .result {
-    margin-top: 20px;
-    padding: 25px;
+
+    margin-top: 25px;
+
+    padding: 30px 25px;
+
     text-align: center;
 }
 
-#detected {
-    font-size: 30px;
-    font-weight: bold;
-    color: #176b45;
-    margin: 10px 0;
-}
+.result h2 {
 
-#confidence {
-    color: #65756c;
+    font-size: 25px;
+
+    color: #164b32;
+
     margin-bottom: 15px;
 }
 
-.info-box {
-    margin-top: 15px;
-    background: #eef7f1;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: left;
+
+/* =====================================================
+   DETECTED
+===================================================== */
+
+#detected {
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    color: #176b45;
+
+    margin: 12px 0 8px;
 }
 
-.info-box p {
-    margin: 10px 0;
-    line-height: 1.5;
+
+/* =====================================================
+   CONFIDENCE
+===================================================== */
+
+#confidence {
+
+    display: inline-block;
+
+    color: #65756c;
+
+    background: #f1f6f3;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin-bottom: 20px;
 }
+
+
+/* =====================================================
+   RESULT INFORMATION
+===================================================== */
+
+.info-box {
+
+    margin-top: 10px;
+
+    background:
+        linear-gradient(135deg, #f4faf6, #edf7f0);
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    text-align: left;
+
+    border: 1px solid rgba(23, 107, 69, 0.08);
+}
+
+.info-item {
+
+    padding: 16px 0;
+
+    border-bottom:
+        1px solid rgba(24, 59, 42, 0.08);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item strong {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 15px;
+
+    color: #315c45;
+}
+
+.info-item span {
+
+    display: block;
+
+    color: #42594d;
+
+    line-height: 1.55;
+
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   BIN BADGE
+===================================================== */
 
 #disposal {
-    font-weight: bold;
+
+    display: inline-block !important;
+
+    padding: 12px 18px;
+
+    border-radius: 14px;
+
+    font-size: 18px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1.4 !important;
+
+    background: #eef7f1;
+
+    color: #176b45;
 }
 
+
+/* BIN COLORS */
+
+.bin-blue {
+
+    background: #dceeff !important;
+
+    color: #07589d !important;
+
+    border: 2px solid #9acbfa;
+}
+
+.bin-red {
+
+    background: #ffe2e2 !important;
+
+    color: #b51f1f !important;
+
+    border: 2px solid #ffaaaa;
+}
+
+.bin-green {
+
+    background: #dcf7df !important;
+
+    color: #16702a !important;
+
+    border: 2px solid #a7e6ae;
+}
+
+.bin-yellow {
+
+    background: #fff4c7 !important;
+
+    color: #8b6500 !important;
+
+    border: 2px solid #f2d56b;
+}
+
+.bin-grey {
+
+    background: #eeeeee !important;
+
+    color: #555555 !important;
+
+    border: 2px solid #cccccc;
+}
+
+.bin-warning {
+
+    background: #ffe7c7 !important;
+
+    color: #9a5500 !important;
+
+    border: 2px solid #f2bf78;
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
 .dashboard {
+
     margin-top: 25px;
+
+    padding: 28px 20px;
 }
 
 .dashboard h2 {
+
     text-align: center;
-    margin-bottom: 15px;
+
+    margin-bottom: 20px;
+
+    font-size: 25px;
+
+    color: #164b32;
 }
 
 .stats {
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 14px;
 }
 
 .stat {
-    padding: 18px;
+
+    background:
+        linear-gradient(145deg, #f8fcf9, #eef7f1);
+
+    padding: 20px 12px;
+
     text-align: center;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(23, 107, 69, 0.08);
+
+    transition: transform 0.2s ease;
+}
+
+.stat:hover {
+
+    transform: translateY(-3px);
 }
 
 .stat h3 {
-    font-size: 25px;
+
+    font-size: 30px;
+
     color: #176b45;
+
+    margin-bottom: 5px;
 }
 
 .stat p {
-    margin-top: 5px;
+
     color: #65756c;
+
+    font-size: 14px;
+
+    font-weight: 600;
 }
 
-#status {
-    margin-top: 15px;
-    color: #607568;
-    font-weight: bold;
-}
+
+/* =====================================================
+   FOOTER
+===================================================== */
 
 footer {
+
     text-align: center;
-    padding: 25px;
+
+    padding: 28px 15px;
+
     color: #65756c;
+
+    font-size: 13px;
 }
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 850px) {
+
+    header h1 {
+        font-size: 32px;
+    }
+
+    .stats {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    #camera-video,
+    #captured-image {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        background: #f4faf6;
+    }
+
+    header {
+        padding: 24px 15px;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+    header p {
+        font-size: 13px;
+    }
+
+    .container {
+        padding: 14px 10px 30px;
+    }
+
+    .hero {
+        padding: 22px 16px;
+        border-radius: 20px;
+    }
+
+    .hero h2 {
+        font-size: 23px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .buttons {
+
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+
+        margin-top: 20px;
+    }
+
+    button,
+    .upload-label {
+
+        width: 100%;
+
+        padding: 15px 12px;
+
+        font-size: 15px;
+
+        border-radius: 13px;
+    }
+
+    #status {
+
+        font-size: 12px;
+
+        line-height: 1.4;
+    }
+
+    .camera-card {
+
+        padding: 20px 10px 25px;
+
+        border-radius: 20px;
+    }
+
+    .camera-title {
+        font-size: 19px;
+    }
+
+    #camera-video,
+    #captured-image {
+
+        width: 100%;
+
+        aspect-ratio: 4 / 3;
+
+        border-radius: 19px;
+    }
+
+    #uploaded-image {
+
+        width: 100%;
+
+        border-radius: 19px;
+    }
+
+    .result {
+
+        padding: 23px 15px;
+
+        border-radius: 20px;
+    }
+
+    .result h2 {
+        font-size: 22px;
+    }
+
+    #detected {
+        font-size: 28px;
+    }
+
+    #confidence {
+        font-size: 12px;
+    }
+
+    .info-box {
+        padding: 16px;
+        border-radius: 17px;
+    }
+
+    .info-item {
+        padding: 14px 0;
+    }
+
+    .info-item span {
+        font-size: 14px;
+    }
+
+    #disposal {
+        font-size: 16px !important;
+        padding: 10px 13px;
+    }
+
+    .dashboard {
+        padding: 22px 12px;
+        border-radius: 20px;
+    }
+
+    .dashboard h2 {
+        font-size: 22px;
+    }
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 10px;
+    }
+
+    .stat {
+        padding: 16px 8px;
+        border-radius: 15px;
+    }
+
+    .stat h3 {
+        font-size: 26px;
+    }
+
+    .stat p {
+        font-size: 12px;
+    }
+
+    footer {
+        font-size: 11px;
+    }
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <header>
+
     <h1>🌱 EcoVision AI</h1>
-    <p>Smart Waste Segregation & Recycling Assistant</p>
+
+    <p>
+        Smart Waste Segregation & Recycling Assistant
+    </p>
+
 </header>
+
+
 
 <div class="container">
 
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
 <section class="hero">
 
-    <h2>Identify Your Waste</h2>
+    <h2>
+        Identify Your Waste ♻️
+    </h2>
 
     <p>
-        Capture a waste item using your back camera or upload an image.
-        Confirm the scan before the AI gives the final result.
+
+        Capture a waste item using your camera
+        or upload an image. Our AI will identify
+        the waste category and suggest the
+        appropriate disposal method.
+
     </p>
+
 
     <div class="buttons">
 
-        <button onclick="startCamera()">
-            📷 Start Back Camera
+
+        <!-- START CAMERA -->
+
+        <button
+            onclick="startCamera()"
+            id="startCameraBtn">
+
+            📷 Start Camera
+
         </button>
 
-        <button id="captureBtn"
-                onclick="capturePhoto()"
-                disabled>
+
+        <!-- CAPTURE -->
+
+        <button
+            id="captureBtn"
+            onclick="capturePhoto()"
+            disabled>
+
             📸 Capture Photo
+
         </button>
 
-        <button id="retakeBtn"
-                onclick="retakePhoto()"
-                disabled>
+
+        <!-- RETAKE -->
+
+        <button
+            id="retakeBtn"
+            onclick="retakePhoto()"
+            disabled>
+
             🔄 Retake
+
         </button>
 
-        <button id="confirmBtn"
-                onclick="confirmScan()"
-                disabled>
+
+        <!-- CONFIRM -->
+
+        <button
+            id="confirmBtn"
+            onclick="confirmScan()"
+            disabled>
+
             ✅ Confirm Scan
+
         </button>
+
+
+        <!-- UPLOAD -->
 
         <label class="upload-label">
+
             🖼️ Upload Image
-            <input type="file"
-                   id="imageUpload"
-                   accept="image/*"
-                   onchange="handleImage(event)">
+
+            <input
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                onchange="handleImage(event)">
+
         </label>
+
 
     </div>
 
-    <p id="status">⏳ Loading AI model...</p>
+
+    <p id="status">
+        ⏳ Loading AI model...
+    </p>
 
 </section>
 
 
-<section id="camera-area">
 
-    <video id="camera-video"
-           autoplay
-           playsinline
-           muted
-           style="display:none;">
-    </video>
+<!-- =====================================================
+     CAMERA
+===================================================== -->
+
+<section class="camera-card">
+
+    <div class="camera-title">
+        📷 Camera Preview
+    </div>
+
+
+    <section id="camera-area">
+
+        <video
+            id="camera-video"
+            autoplay
+            playsinline
+            muted
+            style="display:none;">
+
+        </video>
+
+    </section>
+
+
+    <section id="image-area">
+
+        <img
+            id="uploaded-image"
+            alt="Uploaded waste">
+
+    </section>
 
 </section>
 
 
-<section id="image-area">
 
-    <img id="uploaded-image"
-         alt="Uploaded waste">
-
-</section>
-
+<!-- =====================================================
+     RESULT
+===================================================== -->
 
 <section class="result">
 
-    <h2>🔍 AI Result</h2>
+    <h2>
+        🔍 AI Result
+    </h2>
+
 
     <div id="detected">
         Waiting for scan...
     </div>
 
+
     <div id="confidence">
         -
     </div>
 
+
     <div class="info-box">
 
-        <p>
-            <strong>♻️ Recycling:</strong>
-            <span id="recycling">-</span>
-        </p>
 
-        <p>
-            <strong>🗑️ Recommended Bin:</strong>
-            <span id="disposal">-</span>
-        </p>
+        <!-- RECYCLING -->
 
-        <p>
-            <strong>🌱 Environmental Info:</strong>
-            <span id="environment">-</span>
-        </p>
+        <div class="info-item">
+
+            <strong>
+                ♻️ Recycling Information
+            </strong>
+
+            <span id="recycling">
+                -
+            </span>
+
+        </div>
+
+
+        <!-- BIN -->
+
+        <div class="info-item">
+
+            <strong>
+                🗑️ Recommended Bin
+            </strong>
+
+            <span id="disposal">
+                -
+            </span>
+
+        </div>
+
+
+        <!-- ENVIRONMENT -->
+
+        <div class="info-item">
+
+            <strong>
+                🌱 Environmental Information
+            </strong>
+
+            <span id="environment">
+                -
+            </span>
+
+        </div>
+
 
     </div>
 
 </section>
 
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
 
 <section class="dashboard">
 
-    <h2>📊 Waste Detection Dashboard</h2>
+    <h2>
+        📊 Waste Detection Dashboard
+    </h2>
+
 
     <div class="stats">
 
-        <div class="stat">
-            <h3 id="plasticCount">0</h3>
-            <p>Plastic</p>
-        </div>
 
         <div class="stat">
-            <h3 id="paperCount">0</h3>
-            <p>Paper</p>
+
+            <h3 id="plasticCount">
+                0
+            </h3>
+
+            <p>
+                Plastic
+            </p>
+
         </div>
 
-        <div class="stat">
-            <h3 id="glassCount">0</h3>
-            <p>Glass</p>
-        </div>
 
         <div class="stat">
-            <h3 id="metalCount">0</h3>
-            <p>Metal</p>
+
+            <h3 id="paperCount">
+                0
+            </h3>
+
+            <p>
+                Paper
+            </p>
+
         </div>
 
+
         <div class="stat">
-            <h3 id="organicCount">0</h3>
-            <p>Organic</p>
+
+            <h3 id="glassCount">
+                0
+            </h3>
+
+            <p>
+                Glass
+            </p>
+
         </div>
+
+
+        <div class="stat">
+
+            <h3 id="metalCount">
+                0
+            </h3>
+
+            <p>
+                Metal
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3 id="organicCount">
+                0
+            </h3>
+
+            <p>
+                Organic
+            </p>
+
+        </div>
+
 
     </div>
 
 </section>
+
 
 </div>
 
 
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer>
-    EcoVision AI © 2026 | AI for Sustainable Waste Management
+
+    EcoVision AI © 2026
+    |
+    AI for Sustainable Waste Management
+
 </footer>
+
 
 
 <script>
 
-/* =========================================
-   LATEST TEACHABLE MACHINE MODEL
-   ========================================= */
+
+/* =====================================================
+   TEACHABLE MACHINE MODEL
+===================================================== */
 
 const MODEL_URL =
     "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
 
 
 let model = null;
+
 let video = null;
+
 let stream = null;
+
 let cameraRunning = false;
+
 let capturedImage = null;
 
 
-/* =========================================
+/* =====================================================
    DASHBOARD COUNTS
-   ========================================= */
+===================================================== */
 
 let counts = {
+
     plastic: 0,
+
     paper: 0,
+
     glass: 0,
+
     metal: 0,
+
     organic: 0
+
 };
 
 
-/* =========================================
+/* =====================================================
    LOAD MODEL
-   ========================================= */
+===================================================== */
 
 async function loadModel() {
 
@@ -406,31 +1186,37 @@ async function loadModel() {
         const metadataURL =
             MODEL_URL + "metadata.json";
 
-        model = await tmImage.load(
-            modelURL,
-            metadataURL
-        );
+
+        model =
+            await tmImage.load(
+                modelURL,
+                metadataURL
+            );
+
 
         document.getElementById(
             "status"
         ).innerText =
             "✅ AI Model Ready";
 
+
     } catch (error) {
 
         console.error(error);
+
 
         document.getElementById(
             "status"
         ).innerText =
             "❌ AI Model could not be loaded.";
+
     }
 }
 
 
-/* =========================================
-   START BACK CAMERA
-   ========================================= */
+/* =====================================================
+   START CAMERA
+===================================================== */
 
 async function startCamera() {
 
@@ -443,132 +1229,241 @@ async function startCamera() {
         return;
     }
 
-    if (cameraRunning) {
-        return;
-    }
 
     try {
+
+
+        /* ---------------------------------------------
+           STOP OLD CAMERA IF ANY
+        --------------------------------------------- */
+
+        if (stream) {
+
+            stream
+                .getTracks()
+                .forEach(
+                    track => track.stop()
+                );
+
+            stream = null;
+        }
+
+
+        /* ---------------------------------------------
+           RESET CAMERA AREA
+        --------------------------------------------- */
+
+        const cameraArea =
+            document.getElementById(
+                "camera-area"
+            );
+
+
+        cameraArea.innerHTML = `
+
+            <video
+                id="camera-video"
+                autoplay
+                playsinline
+                muted>
+            </video>
+
+        `;
+
 
         video =
             document.getElementById(
                 "camera-video"
             );
 
-        /*
-         * facingMode: environment
-         * = phone ka BACK camera
-         */
+
+        /* ---------------------------------------------
+           START NORMAL CAMERA
+        --------------------------------------------- */
 
         stream =
             await navigator.mediaDevices.getUserMedia({
 
                 video: {
-                    facingMode: {
-                        ideal: "environment"
-                    },
+
                     width: {
                         ideal: 1280
                     },
+
                     height: {
                         ideal: 720
                     }
+
                 },
 
                 audio: false
+
             });
 
 
-        video.srcObject = stream;
+        video.srcObject =
+            stream;
 
-        video.style.display = "block";
 
         await video.play();
 
+
         cameraRunning = true;
+
+
+        /* ---------------------------------------------
+           BUTTON STATES
+        --------------------------------------------- */
 
         document.getElementById(
             "captureBtn"
         ).disabled = false;
 
+
         document.getElementById(
             "retakeBtn"
         ).disabled = true;
+
 
         document.getElementById(
             "confirmBtn"
         ).disabled = true;
 
+
+        /* ---------------------------------------------
+           HIDE PREVIOUS UPLOAD
+        --------------------------------------------- */
+
+        const uploadedImage =
+            document.getElementById(
+                "uploaded-image"
+            );
+
+
+        uploadedImage.style.display =
+            "none";
+
+
         document.getElementById(
             "status"
         ).innerText =
-            "📷 Back camera ready. Place the waste item in front of the camera.";
+            "📷 Camera ready. Place the waste item in front of the camera.";
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Camera error:",
+            error
+        );
+
+
+        cameraRunning = false;
+
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "❌ Camera could not be started.";
+
 
         alert(
-            "Back camera access nahi mila. Browser mein camera permission allow karo."
+            "Camera access nahi mila. Please browser camera permission allow karo."
         );
+
     }
 }
 
 
-/* =========================================
+/* =====================================================
    CAPTURE PHOTO
-   ========================================= */
+===================================================== */
 
 function capturePhoto() {
 
-    if (!video || !cameraRunning) {
+    if (
+        !video ||
+        !cameraRunning
+    ) {
+
         return;
     }
 
+
     const canvas =
-        document.createElement("canvas");
+        document.createElement(
+            "canvas"
+        );
+
 
     canvas.width =
-        video.videoWidth || 640;
+        video.videoWidth ||
+        1280;
+
 
     canvas.height =
-        video.videoHeight || 480;
+        video.videoHeight ||
+        720;
+
 
     const ctx =
-        canvas.getContext("2d");
+        canvas.getContext(
+            "2d"
+        );
+
 
     ctx.drawImage(
+
         video,
+
         0,
+
         0,
+
         canvas.width,
+
         canvas.height
+
     );
 
-    capturedImage = canvas;
+
+    capturedImage =
+        canvas;
+
 
     stopCamera();
 
-    video.style.display = "none";
 
     const cameraArea =
         document.getElementById(
             "camera-area"
         );
 
-    cameraArea.innerHTML = "";
 
-    canvas.id = "captured-image";
+    cameraArea.innerHTML =
+        "";
 
-    cameraArea.appendChild(canvas);
 
+    canvas.id =
+        "captured-image";
+
+
+    cameraArea.appendChild(
+        canvas
+    );
+
+
+    /* BUTTONS */
 
     document.getElementById(
         "captureBtn"
     ).disabled = true;
 
+
     document.getElementById(
         "retakeBtn"
     ).disabled = false;
+
 
     document.getElementById(
         "confirmBtn"
@@ -579,12 +1474,13 @@ function capturePhoto() {
         "status"
     ).innerText =
         "📸 Photo captured. Check it and click Confirm Scan.";
+
 }
 
 
-/* =========================================
+/* =====================================================
    STOP CAMERA
-   ========================================= */
+===================================================== */
 
 function stopCamera() {
 
@@ -599,54 +1495,70 @@ function stopCamera() {
         stream = null;
     }
 
-    cameraRunning = false;
+
+    cameraRunning =
+        false;
 }
 
 
-/* =========================================
-   RETAKE
-   ========================================= */
+/* =====================================================
+   RETAKE PHOTO
+===================================================== */
 
 function retakePhoto() {
 
-    capturedImage = null;
+    capturedImage =
+        null;
+
 
     document.getElementById(
         "camera-area"
-    ).innerHTML =
-        `
+    ).innerHTML = `
+
         <video
             id="camera-video"
             autoplay
             playsinline
-            muted
-            style="display:none;">
+            muted>
         </video>
-        `;
+
+    `;
 
 
     document.getElementById(
         "retakeBtn"
     ).disabled = true;
 
+
     document.getElementById(
         "confirmBtn"
     ).disabled = true;
 
 
+    document.getElementById(
+        "captureBtn"
+    ).disabled = true;
+
+
     startCamera();
+
 }
 
 
-/* =========================================
+/* =====================================================
    CONFIRM SCAN
-   ========================================= */
+===================================================== */
 
 async function confirmScan() {
 
-    if (!capturedImage || !model) {
+    if (
+        !capturedImage ||
+        !model
+    ) {
+
         return;
     }
+
 
     document.getElementById(
         "status"
@@ -663,6 +1575,7 @@ async function confirmScan() {
         "confirmBtn"
     ).disabled = true;
 
+
     document.getElementById(
         "retakeBtn"
     ).disabled = true;
@@ -672,30 +1585,37 @@ async function confirmScan() {
         "status"
     ).innerText =
         "✅ Scan confirmed successfully.";
+
 }
 
 
-/* =========================================
+/* =====================================================
    UPLOAD IMAGE
-   ========================================= */
+===================================================== */
 
 function handleImage(event) {
 
     const file =
         event.target.files[0];
 
+
     if (!file) {
+
         return;
     }
 
+
     stopCamera();
+
 
     const cameraArea =
         document.getElementById(
             "camera-area"
         );
 
-    cameraArea.innerHTML = "";
+
+    cameraArea.innerHTML =
+        "";
 
 
     const image =
@@ -709,12 +1629,14 @@ function handleImage(event) {
             file
         );
 
+
     image.style.display =
         "block";
 
 
     image.onload =
         async function () {
+
 
             if (!model) {
 
@@ -732,20 +1654,24 @@ function handleImage(event) {
                 "🤖 AI is analyzing the uploaded image...";
 
 
-            await predict(image);
+            await predict(
+                image
+            );
 
 
             document.getElementById(
                 "status"
             ).innerText =
                 "✅ Image scan complete.";
+
         };
+
 }
 
 
-/* =========================================
+/* =====================================================
    AI PREDICTION
-   ========================================= */
+===================================================== */
 
 async function predict(
     imageElement
@@ -753,13 +1679,16 @@ async function predict(
 
     try {
 
+
         const prediction =
             await model.predict(
                 imageElement
             );
 
 
-        let highestProbability = 0;
+        let highestProbability =
+            0;
+
 
         let detectedClass =
             "Unknown";
@@ -770,6 +1699,7 @@ async function predict(
             i < prediction.length;
             i++
         ) {
+
 
             const probability =
                 prediction[i].probability;
@@ -783,9 +1713,12 @@ async function predict(
                 highestProbability =
                     probability;
 
+
                 detectedClass =
                     prediction[i].className;
+
             }
+
         }
 
 
@@ -799,22 +1732,25 @@ async function predict(
 
         console.error(error);
 
+
         document.getElementById(
             "status"
         ).innerText =
             "❌ Error while analyzing image.";
+
     }
 }
 
 
-/* =========================================
+/* =====================================================
    SHOW RESULT
-   ========================================= */
+===================================================== */
 
 function showResult(
     className,
     probability
 ) {
+
 
     const name =
         className
@@ -822,11 +1758,19 @@ function showResult(
             .trim();
 
 
+    /* ---------------------------------------------
+       DETECTED CLASS
+    --------------------------------------------- */
+
     document.getElementById(
         "detected"
     ).innerText =
         "♻️ " + className;
 
+
+    /* ---------------------------------------------
+       CONFIDENCE
+    --------------------------------------------- */
 
     document.getElementById(
         "confidence"
@@ -839,133 +1783,198 @@ function showResult(
 
 
     let recycling = "";
+
     let disposal = "";
+
     let environment = "";
 
+    let binClass = "";
 
-    /* =====================================
+
+    /* =================================================
        PLASTIC
-       ===================================== */
+    ================================================= */
 
     if (
         name.includes("plastic")
     ) {
 
+
         recycling =
             "Plastic items may be recyclable depending on the type and local rules.";
+
 
         disposal =
             "🟨 Yellow Bin — Plastic Waste";
 
+
         environment =
             "Proper plastic segregation helps reduce plastic pollution.";
 
+
+        binClass =
+            "bin-yellow";
+
+
         counts.plastic++;
+
     }
 
 
-    /* =====================================
+    /* =================================================
        PAPER
-       ===================================== */
+    ================================================= */
 
     else if (
         name.includes("paper")
     ) {
 
+
         recycling =
             "Clean and dry paper is generally recyclable.";
+
 
         disposal =
             "🟦 Blue Bin — Paper Waste";
 
+
         environment =
             "Paper recycling helps reduce the need for new raw materials.";
 
+
+        binClass =
+            "bin-blue";
+
+
         counts.paper++;
+
     }
 
 
-    /* =====================================
+    /* =================================================
        GLASS
-       ===================================== */
+    ================================================= */
 
     else if (
         name.includes("glass")
     ) {
 
+
         recycling =
             "Glass bottles and jars can commonly be recycled.";
+
 
         disposal =
             "⬜ White/Grey Bin — Glass Waste";
 
+
         environment =
             "Glass can often be recycled multiple times.";
 
+
+        binClass =
+            "bin-grey";
+
+
         counts.glass++;
+
     }
 
 
-    /* =====================================
+    /* =================================================
        METAL
-       ===================================== */
+    ================================================= */
 
     else if (
         name.includes("metal")
     ) {
 
+
         recycling =
             "Many metal cans and containers are recyclable.";
+
 
         disposal =
             "🟥 Red Bin — Metal Waste";
 
+
         environment =
             "Metal recycling helps conserve raw materials and energy.";
 
+
+        binClass =
+            "bin-red";
+
+
         counts.metal++;
+
     }
 
 
-    /* =====================================
+    /* =================================================
        ORGANIC
-       ===================================== */
+    ================================================= */
 
     else if (
+
         name.includes("organic") ||
+
         name.includes("food") ||
+
         name.includes("biodegradable")
+
     ) {
+
 
         recycling =
             "Organic waste can often be composted.";
 
+
         disposal =
             "🟩 Green Bin — Organic/Biodegradable Waste";
+
 
         environment =
             "Composting organic waste can reduce landfill waste.";
 
+
+        binClass =
+            "bin-green";
+
+
         counts.organic++;
+
     }
 
 
-    /* =====================================
+    /* =================================================
        UNKNOWN
-       ===================================== */
+    ================================================= */
 
     else {
+
 
         recycling =
             "Please check local waste-management guidelines.";
 
+
         disposal =
             "⚠️ Waste category not recognized.";
 
+
         environment =
             "Correct waste segregation helps improve waste management.";
+
+
+        binClass =
+            "bin-warning";
+
     }
 
+
+    /* =================================================
+       UPDATE RESULT
+    ================================================= */
 
     document.getElementById(
         "recycling"
@@ -973,10 +1982,40 @@ function showResult(
         recycling;
 
 
-    document.getElementById(
-        "disposal"
-    ).innerText =
+    const disposalElement =
+        document.getElementById(
+            "disposal"
+        );
+
+
+    disposalElement.innerText =
         disposal;
+
+
+    /* Remove previous bin classes */
+
+    disposalElement.classList.remove(
+
+        "bin-blue",
+
+        "bin-red",
+
+        "bin-green",
+
+        "bin-yellow",
+
+        "bin-grey",
+
+        "bin-warning"
+
+    );
+
+
+    /* Add correct bin color */
+
+    disposalElement.classList.add(
+        binClass
+    );
 
 
     document.getElementById(
@@ -986,14 +2025,36 @@ function showResult(
 
 
     updateDashboard();
+
+
+    /* Scroll result into view on mobile */
+
+    setTimeout(
+        function () {
+
+            document
+                .querySelector(".result")
+                .scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "start"
+
+                });
+
+        },
+        150
+    );
+
 }
 
 
-/* =========================================
+/* =====================================================
    UPDATE DASHBOARD
-   ========================================= */
+===================================================== */
 
 function updateDashboard() {
+
 
     document.getElementById(
         "plasticCount"
@@ -1023,16 +2084,33 @@ function updateDashboard() {
         "organicCount"
     ).innerText =
         counts.organic;
+
 }
 
 
-/* =========================================
-   LOAD MODEL
-   ========================================= */
+/* =====================================================
+   LOAD AI MODEL ON PAGE LOAD
+===================================================== */
 
 loadModel();
 
+
+/* =====================================================
+   CLEAN CAMERA WHEN PAGE CLOSES
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        stopCamera();
+
+    }
+);
+
 </script>
 
+
 </body>
+
 </html>
