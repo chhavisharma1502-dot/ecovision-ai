@@ -42,14 +42,39 @@ header p {
 
 .container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1250px;
     margin: auto;
     padding: 25px 15px;
 }
 
+/* ================================
+   MAIN LAYOUT
+================================ */
+
+.main-layout {
+    display: grid;
+    grid-template-columns: 285px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.left-sidebar {
+    position: sticky;
+    top: 18px;
+}
+
+.content-area {
+    min-width: 0;
+}
+
+/* ================================
+   HERO
+================================ */
+
 .hero,
 .result,
-.stat {
+.stat,
+.dashboard {
     background: white;
     border-radius: 22px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.08);
@@ -108,7 +133,9 @@ input[type="file"] {
     display: none;
 }
 
-/* CAMERA */
+/* ================================
+   CAMERA
+================================ */
 
 #camera-area {
     width: 100%;
@@ -137,7 +164,9 @@ input[type="file"] {
     display: block;
 }
 
-/* UPLOAD */
+/* ================================
+   UPLOAD
+================================ */
 
 #image-area {
     margin-top: 20px;
@@ -153,7 +182,9 @@ input[type="file"] {
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
-/* STATUS */
+/* ================================
+   STATUS
+================================ */
 
 #status {
     margin-top: 17px;
@@ -162,7 +193,9 @@ input[type="file"] {
     line-height: 1.5;
 }
 
-/* RESULT */
+/* ================================
+   RESULT
+================================ */
 
 .result {
     margin-top: 25px;
@@ -188,7 +221,9 @@ input[type="file"] {
     margin-bottom: 18px;
 }
 
-/* INFO BOX */
+/* ================================
+   INFO BOX
+================================ */
 
 .info-box {
     margin-top: 18px;
@@ -219,7 +254,9 @@ input[type="file"] {
     text-align: center;
 }
 
-/* BIN COLOURS */
+/* ================================
+   BIN COLOURS
+================================ */
 
 .bin-yellow {
     background: #fff3a6;
@@ -251,7 +288,9 @@ input[type="file"] {
     color: #8a5100;
 }
 
-/* UNKNOWN */
+/* ================================
+   UNKNOWN
+================================ */
 
 .unknown-result {
     background: #fff7df;
@@ -272,39 +311,84 @@ input[type="file"] {
     line-height: 1.5;
 }
 
-/* DASHBOARD */
+/* ================================
+   LEFT DASHBOARD
+================================ */
 
 .dashboard {
-    margin-top: 28px;
+    padding: 20px;
 }
 
 .dashboard h2 {
     text-align: center;
     margin-bottom: 17px;
+    font-size: 21px;
 }
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 13px;
+    grid-template-columns: 1fr;
+    gap: 10px;
 }
 
 .stat {
-    padding: 20px;
+    padding: 14px;
     text-align: center;
+    box-shadow: none;
+    background: #f5faf7;
+    border-radius: 15px;
 }
 
 .stat h3 {
-    font-size: 28px;
+    font-size: 27px;
     color: #176b45;
 }
 
 .stat p {
-    margin-top: 6px;
+    margin-top: 5px;
     color: #65756c;
 }
 
-/* FOOTER */
+/* ================================
+   ECO POINTS
+================================ */
+
+.points-card {
+    margin-top: 18px;
+    background: linear-gradient(135deg, #176b45, #23915f);
+    color: white;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+}
+
+.points-card h2 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+#pointsCount {
+    font-size: 42px;
+    font-weight: 800;
+    margin: 8px 0;
+}
+
+#pointsMessage {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.points-rule {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    font-size: 12px;
+}
+
+/* ================================
+   FOOTER
+================================ */
 
 footer {
     text-align: center;
@@ -312,14 +396,23 @@ footer {
     color: #65756c;
 }
 
-/* MOBILE */
+/* ================================
+   MOBILE
+================================ */
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .left-sidebar {
+        position: static;
+    }
 
     .stats {
         grid-template-columns: repeat(3, 1fr);
     }
-
 }
 
 @media (max-width: 700px) {
@@ -382,11 +475,6 @@ footer {
     .stats {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .stat:last-child {
-        grid-column: span 2;
-    }
-
 }
 
 </style>
@@ -407,15 +495,101 @@ footer {
 
 <div class="container">
 
+<div class="main-layout">
+
+
+<!-- ================================
+     LEFT SIDEBAR
+================================ -->
+
+<aside class="left-sidebar">
+
+<section class="dashboard">
+
+    <h2>
+        📊 Waste Dashboard
+    </h2>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3 id="plasticCount">0</h3>
+            <p>Plastic</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="paperCount">0</h3>
+            <p>Paper</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="glassCount">0</h3>
+            <p>Glass</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="metalCount">0</h3>
+            <p>Metal</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="organicCount">0</h3>
+            <p>Organic</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="ewasteCount">0</h3>
+            <p>E-Waste</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ECO POINTS -->
+
+<section class="points-card">
+
+    <h2>
+        🌟 Eco Points
+    </h2>
+
+    <div id="pointsCount">
+        0
+    </div>
+
+    <p id="pointsMessage">
+        Start scanning waste and earn points
+        for every successful scan!
+    </p>
+
+    <div class="points-rule">
+        ♻️ +10 points for every successful scan
+    </div>
+
+</section>
+
+</aside>
+
+
+<!-- ================================
+     MAIN CONTENT
+================================ -->
+
+<main class="content-area">
+
 
 <section class="hero">
 
-    <h2>Identify Your Waste</h2>
+    <h2>
+        Identify Your Waste
+    </h2>
 
     <p>
         Use your phone's back camera or upload an image.
-        EcoVision AI will identify the waste category and
-        suggest the appropriate disposal method.
+        EcoVision AI will identify the waste category and suggest
+        the appropriate bin.
     </p>
 
 
@@ -476,6 +650,14 @@ footer {
 
 <section id="camera-area">
 
+    <video
+        id="camera-video"
+        autoplay
+        playsinline
+        muted
+        style="display:none;">
+    </video>
+
 </section>
 
 
@@ -509,10 +691,9 @@ footer {
     </div>
 
 
-    <div
-        id="unknownMessage"
-        class="unknown-result"
-        style="display:none;">
+    <div id="unknownMessage"
+         class="unknown-result"
+         style="display:none;">
 
         <h3>
             ⚠️ I Can't Recognize This Item Clearly
@@ -544,7 +725,7 @@ footer {
         <p>
 
             <strong>
-                🗑️ Recommended Disposal:
+                🗑️ Recommended Bin:
             </strong>
 
             <span
@@ -575,102 +756,9 @@ footer {
 </section>
 
 
-<!-- DASHBOARD -->
+</main>
 
-<section class="dashboard">
-
-    <h2>
-        📊 Waste Detection Dashboard
-    </h2>
-
-
-    <div class="stats">
-
-
-        <div class="stat">
-
-            <h3 id="plasticCount">
-                0
-            </h3>
-
-            <p>
-                Plastic
-            </p>
-
-        </div>
-
-
-        <div class="stat">
-
-            <h3 id="paperCount">
-                0
-            </h3>
-
-            <p>
-                Paper
-            </p>
-
-        </div>
-
-
-        <div class="stat">
-
-            <h3 id="glassCount">
-                0
-            </h3>
-
-            <p>
-                Glass
-            </p>
-
-        </div>
-
-
-        <div class="stat">
-
-            <h3 id="metalCount">
-                0
-            </h3>
-
-            <p>
-                Metal
-            </p>
-
-        </div>
-
-
-        <div class="stat">
-
-            <h3 id="organicCount">
-                0
-            </h3>
-
-            <p>
-                Organic
-            </p>
-
-        </div>
-
-
-        <!-- NEW E-WASTE -->
-
-        <div class="stat">
-
-            <h3 id="ewasteCount">
-                0
-            </h3>
-
-            <p>
-                E-Waste
-            </p>
-
-        </div>
-
-
-    </div>
-
-</section>
-
+</div>
 
 </div>
 
@@ -683,17 +771,14 @@ footer {
 </footer>
 
 
-
 <script>
 
 /* =========================================
    TEACHABLE MACHINE MODEL
-   NEW MODEL WITH E-WASTE
 ========================================= */
 
 const MODEL_URL =
-    "https://teachablemachine.withgoogle.com/models/r6Y7L-hqB/";
-
+    "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
 
 let model = null;
 
@@ -707,14 +792,69 @@ let capturedImage = null;
 
 
 /* =========================================
-   CONFIDENCE THRESHOLD
+   CONFIDENCE
 ========================================= */
 
 const CONFIDENCE_THRESHOLD = 0.60;
 
 
 /* =========================================
-   DASHBOARD COUNTS
+   ECO POINTS
+========================================= */
+
+let ecoPoints = 0;
+
+function addEcoPoints() {
+
+    ecoPoints += 10;
+
+    document.getElementById(
+        "pointsCount"
+    ).innerText = ecoPoints;
+
+
+    let message =
+        "Great job! Keep going! 🌱";
+
+
+    if (ecoPoints >= 100) {
+
+        message =
+            "🏆 Amazing! You reached 100 Eco Points!";
+
+    }
+
+    else if (ecoPoints >= 50) {
+
+        message =
+            "🔥 Awesome! You reached 50 Eco Points!";
+
+    }
+
+    else if (ecoPoints >= 30) {
+
+        message =
+            "🌿 Nice! You're building a greener habit!";
+
+    }
+
+    else if (ecoPoints >= 10) {
+
+        message =
+            "♻️ Great start! Keep scanning responsibly!";
+
+    }
+
+
+    document.getElementById(
+        "pointsMessage"
+    ).innerText = message;
+
+}
+
+
+/* =========================================
+   DASHBOARD
 ========================================= */
 
 let counts = {
@@ -732,133 +872,6 @@ let counts = {
     ewaste: 0
 
 };
-
-
-/* =========================================
-   WASTE INFORMATION
-========================================= */
-
-const wasteInfo = {
-
-    plastic: {
-
-        name: "Plastic",
-
-        recycling:
-            "Clean plastic containers and packaging can often be recycled.",
-
-        disposal:
-            "♻️ Plastic / recyclable waste — follow your local plastic recycling system.",
-
-        environment:
-            "Reducing single-use plastic helps lower plastic pollution.",
-
-        className:
-            "bin-yellow"
-
-    },
-
-
-    paper: {
-
-        name: "Paper",
-
-        recycling:
-            "Clean and dry paper and cardboard can generally be recycled.",
-
-        disposal:
-            "📘 Paper / dry recyclable waste — keep it clean and dry.",
-
-        environment:
-            "Recycling paper helps reduce the need for new raw materials.",
-
-        className:
-            "bin-blue"
-
-    },
-
-
-    glass: {
-
-        name: "Glass",
-
-        recycling:
-            "Glass bottles and jars can often be recycled when separated correctly.",
-
-        disposal:
-            "🟦 Glass recycling — keep glass separate and handle broken glass carefully.",
-
-        environment:
-            "Glass can be recycled repeatedly without losing its basic material quality.",
-
-        className:
-            "bin-blue"
-
-    },
-
-
-    metal: {
-
-        name: "Metal",
-
-        recycling:
-            "Clean metal cans and suitable scrap metal can be recycled.",
-
-        disposal:
-            "⚙️ Metal / recyclable waste — keep metal separate where required.",
-
-        environment:
-            "Recycling metal saves raw materials and energy.",
-
-        className:
-            "bin-grey"
-
-    },
-
-
-    organic: {
-
-        name: "Organic Waste",
-
-        recycling:
-            "Organic waste can be composted or processed into useful organic material.",
-
-        disposal:
-            "🌿 Green / wet waste — send suitable organic waste for composting.",
-
-        environment:
-            "Composting organic waste can reduce the amount sent to landfill.",
-
-        className:
-            "bin-green"
-
-    },
-
-
-    /* =========================================
-       NEW E-WASTE
-    ========================================= */
-
-    ewaste: {
-
-        name: "E-Waste",
-
-        recycling:
-            "Electronic waste should be collected separately and sent to an authorized e-waste collection or recycling facility.",
-
-        disposal:
-            "🔌 E-WASTE: Do NOT put in normal household bins. Use an authorized e-waste collection point.",
-
-        environment:
-            "Safe e-waste recycling helps recover useful materials and prevents harmful substances from entering the environment.",
-
-        className:
-            "bin-red"
-
-    }
-
-};
-
 
 
 /* =========================================
@@ -892,7 +905,6 @@ async function loadModel() {
 
         console.error(error);
 
-
         document.getElementById(
             "status"
         ).innerText =
@@ -901,7 +913,6 @@ async function loadModel() {
     }
 
 }
-
 
 
 /* =========================================
@@ -915,24 +926,18 @@ function stopCamera() {
         stream
             .getTracks()
             .forEach(track => {
-
                 track.stop();
-
             });
 
         stream = null;
-
     }
 
 
     if (video) {
 
         try {
-
             video.pause();
-
         } catch (e) {}
-
 
         video.srcObject = null;
 
@@ -942,7 +947,6 @@ function stopCamera() {
     cameraRunning = false;
 
 }
-
 
 
 /* =========================================
@@ -969,15 +973,11 @@ function createVideoElement() {
     newVideo.id =
         "camera-video";
 
+    newVideo.autoplay = true;
 
-    newVideo.autoplay =
-        true;
+    newVideo.playsInline = true;
 
-    newVideo.playsInline =
-        true;
-
-    newVideo.muted =
-        true;
+    newVideo.muted = true;
 
 
     cameraArea.appendChild(
@@ -985,14 +985,12 @@ function createVideoElement() {
     );
 
 
-    video =
-        newVideo;
+    video = newVideo;
 
 
     return newVideo;
 
 }
-
 
 
 /* =========================================
@@ -1037,10 +1035,6 @@ async function startCamera() {
             createVideoElement();
 
 
-        /*
-          environment = BACK CAMERA
-        */
-
         let constraints = {
 
             audio: false,
@@ -1048,21 +1042,15 @@ async function startCamera() {
             video: {
 
                 facingMode: {
-
                     exact: "environment"
-
                 },
 
                 width: {
-
                     ideal: 1280
-
                 },
 
                 height: {
-
                     ideal: 720
-
                 }
 
             }
@@ -1079,17 +1067,15 @@ async function startCamera() {
                         constraints
                     );
 
-        } catch (backCameraError) {
+        }
+
+        catch (backCameraError) {
 
             console.warn(
                 "Exact rear camera unavailable:",
                 backCameraError
             );
 
-
-            /*
-              Backup camera request
-            */
 
             stream =
                 await navigator
@@ -1101,21 +1087,15 @@ async function startCamera() {
                         video: {
 
                             facingMode: {
-
                                 ideal: "environment"
-
                             },
 
                             width: {
-
                                 ideal: 1280
-
                             },
 
                             height: {
-
                                 ideal: 720
-
                             }
 
                         }
@@ -1156,17 +1136,14 @@ async function startCamera() {
 
 
         document.getElementById(
-            "uploaded-image"
-        ).style.display = "none";
-
-
-        document.getElementById(
             "status"
         ).innerText =
             "📷 Back camera ready. Place the waste item clearly in front of the camera.";
 
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Camera error:",
@@ -1187,7 +1164,7 @@ async function startCamera() {
         ) {
 
             message =
-                "❌ Camera permission denied. Please allow camera access in your browser.";
+                "❌ Camera permission denied. Please allow camera access.";
 
         }
 
@@ -1197,7 +1174,7 @@ async function startCamera() {
         ) {
 
             message =
-                "❌ No suitable camera was found on this device.";
+                "❌ No suitable camera was found.";
 
         }
 
@@ -1223,7 +1200,6 @@ async function startCamera() {
     }
 
 }
-
 
 
 /* =========================================
@@ -1284,12 +1260,6 @@ function capturePhoto() {
         canvas;
 
 
-    /*
-      IMPORTANT:
-      Camera stops immediately after
-      taking the photo.
-    */
-
     stopCamera();
 
 
@@ -1335,39 +1305,38 @@ function capturePhoto() {
 }
 
 
-
 /* =========================================
-   RETAKE PHOTO
+   RETAKE
 ========================================= */
 
 async function retakePhoto() {
 
-    capturedImage =
-        null;
+    capturedImage = null;
 
 
-    document.getElementById(
-        "uploaded-image"
-    ).style.display =
+    const uploaded =
+        document.getElementById(
+            "uploaded-image"
+        );
+
+
+    uploaded.style.display =
         "none";
 
 
     document.getElementById(
         "captureBtn"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
         "retakeBtn"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
         "confirmBtn"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
@@ -1379,7 +1348,6 @@ async function retakePhoto() {
     await startCamera();
 
 }
-
 
 
 /* =========================================
@@ -1411,14 +1379,12 @@ async function confirmScan() {
 
     document.getElementById(
         "confirmBtn"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
         "retakeBtn"
-    ).disabled =
-        false;
+    ).disabled = false;
 
 
     document.getElementById(
@@ -1427,7 +1393,6 @@ async function confirmScan() {
         "✅ Scan completed. You can scan another item anytime.";
 
 }
-
 
 
 /* =========================================
@@ -1441,18 +1406,20 @@ function handleImage(event) {
 
 
     if (!file) {
-
         return;
-
     }
 
 
     stopCamera();
 
 
-    document.getElementById(
-        "camera-area"
-    ).innerHTML =
+    const cameraArea =
+        document.getElementById(
+            "camera-area"
+        );
+
+
+    cameraArea.innerHTML =
         "";
 
 
@@ -1473,337 +1440,103 @@ function handleImage(event) {
 
 
     document.getElementById(
-        "captureBtn"
-    ).disabled =
-        true;
-
-
-    document.getElementById(
-        "retakeBtn"
-    ).disabled =
-        false;
-
-
-    document.getElementById(
-        "confirmBtn"
-    ).disabled =
-        true;
-
-
-    document.getElementById(
         "status"
     ).innerText =
-        "🤖 AI is analyzing the uploaded image...";
+        "🖼️ Image uploaded. AI is analyzing...";
 
 
-    image.onload =
-        async function() {
+    image.onload = async function() {
 
-            await predict(
-                image
-            );
+        await predict(image);
 
+        document.getElementById(
+            "status"
+        ).innerText =
+            "✅ Scan completed.";
 
-            document.getElementById(
-                "status"
-            ).innerText =
-                "✅ Upload scan completed. You can scan another item anytime.";
-
-        };
+    };
 
 }
 
 
-
 /* =========================================
-   AI PREDICTION
+   PREDICT
 ========================================= */
 
-async function predict(input) {
+async function predict(image) {
 
     if (!model) {
+        return;
+    }
+
+
+    const predictions =
+        await model.predict(
+            image
+        );
+
+
+    let best =
+        predictions[0];
+
+
+    for (
+        let i = 1;
+        i < predictions.length;
+        i++
+    ) {
+
+        if (
+            predictions[i].probability >
+            best.probability
+        ) {
+
+            best =
+                predictions[i];
+
+        }
+
+    }
+
+
+    const className =
+        best.className.toLowerCase().trim();
+
+
+    const confidence =
+        best.probability;
+
+
+    document.getElementById(
+        "confidence"
+    ).innerText =
+        "Confidence: " +
+        (confidence * 100).toFixed(1) +
+        "%";
+
+
+    if (
+        confidence <
+        CONFIDENCE_THRESHOLD
+    ) {
+
+        showUnknown();
 
         return;
 
     }
 
 
-    try {
-
-        const predictions =
-            await model.predict(
-                input
-            );
-
-
-        let bestPrediction =
-            null;
-
-
-        /*
-          Find the class with highest
-          confidence.
-        */
-
-        for (
-            const prediction
-            of predictions
-        ) {
-
-            if (
-                !bestPrediction ||
-                prediction.probability >
-                bestPrediction.probability
-            ) {
-
-                bestPrediction =
-                    prediction;
-
-            }
-
-        }
-
-
-        if (!bestPrediction) {
-
-            return;
-
-        }
-
-
-        const label =
-            bestPrediction.className.trim();
-
-
-        const confidence =
-            bestPrediction.probability;
-
-
-        const key =
-            normalizeClass(
-                label
-            );
-
-
-        document.getElementById(
-            "confidence"
-        ).innerText =
-            "Confidence: " +
-            (
-                confidence * 100
-            ).toFixed(1) +
-            "%";
-
-
-        /*
-          If confidence is below 60%,
-          don't make a guess.
-        */
-
-        if (
-            confidence <
-            CONFIDENCE_THRESHOLD ||
-            !key
-        ) {
-
-            showUnknown();
-
-            return;
-
-        }
-
-
-        showResult(
-            key,
-            confidence
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Prediction error:",
-            error
-        );
-
-
-        document.getElementById(
-            "status"
-        ).innerText =
-            "❌ AI could not analyze this image.";
-
-    }
+    showResult(
+        className,
+        confidence
+    );
 
 }
 
 
-
 /* =========================================
-   NORMALIZE CLASS NAME
-========================================= */
-
-function normalizeClass(label) {
-
-    const value =
-        label
-            .toLowerCase()
-            .replace(
-                /[^a-z]/g,
-                ""
-            );
-
-
-    if (
-        value.includes(
-            "plastic"
-        )
-    ) {
-
-        return "plastic";
-
-    }
-
-
-    if (
-        value.includes(
-            "paper"
-        )
-    ) {
-
-        return "paper";
-
-    }
-
-
-    if (
-        value.includes(
-            "glass"
-        )
-    ) {
-
-        return "glass";
-
-    }
-
-
-    if (
-        value.includes(
-            "metal"
-        )
-    ) {
-
-        return "metal";
-
-    }
-
-
-    if (
-        value.includes(
-            "organic"
-        )
-    ) {
-
-        return "organic";
-
-    }
-
-
-    /*
-      E-waste can appear as:
-      E-waste
-      E Waste
-      ewaste
-      Electronic
-    */
-
-    if (
-        value.includes(
-            "ewaste"
-        ) ||
-        value.includes(
-            "electronic"
-        )
-    ) {
-
-        return "ewaste";
-
-    }
-
-
-    return null;
-
-}
-
-
-
-/* =========================================
-   SHOW RESULT
-========================================= */
-
-function showResult(
-    key,
-    confidence
-) {
-
-    const info =
-        wasteInfo[key];
-
-
-    document.getElementById(
-        "unknownMessage"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "detected"
-    ).innerText =
-        "♻️ " +
-        info.name;
-
-
-    document.getElementById(
-        "recycling"
-    ).innerText =
-        info.recycling;
-
-
-    const disposal =
-        document.getElementById(
-            "disposal"
-        );
-
-
-    disposal.innerText =
-        info.disposal;
-
-
-    disposal.className =
-        info.className;
-
-
-    document.getElementById(
-        "environment"
-    ).innerText =
-        info.environment;
-
-
-    /*
-      COUNT ONLY AFTER A CONFIRMED
-      CAMERA PHOTO OR IMAGE UPLOAD.
-    */
-
-    counts[key]++;
-
-
-    updateDashboard();
-
-}
-
-
-
-/* =========================================
-   UNKNOWN RESULT
+   SHOW UNKNOWN
 ========================================= */
 
 function showUnknown() {
@@ -1811,33 +1544,31 @@ function showUnknown() {
     document.getElementById(
         "detected"
     ).innerText =
-        "❓ Unknown / Unclear";
+        "⚠️ Unclear Waste";
 
 
     document.getElementById(
         "recycling"
     ).innerText =
-        "No reliable recommendation available.";
+        "Please capture a clearer image.";
 
 
-    const disposal =
-        document.getElementById(
-            "disposal"
-        );
+    document.getElementById(
+        "disposal"
+    ).innerText =
+        "📸 Scan Again";
 
 
-    disposal.innerText =
-        "⚠️ Please capture a clearer image.";
-
-
-    disposal.className =
+    document.getElementById(
+        "disposal"
+    ).className =
         "bin-warning";
 
 
     document.getElementById(
         "environment"
     ).innerText =
-        "The AI confidence was too low to safely classify this item.";
+        "A clearer image helps EcoVision AI classify the waste correctly.";
 
 
     document.getElementById(
@@ -1847,6 +1578,243 @@ function showUnknown() {
 
 }
 
+
+/* =========================================
+   SHOW RESULT
+========================================= */
+
+function showResult(
+    type,
+    confidence
+) {
+
+    document.getElementById(
+        "unknownMessage"
+    ).style.display =
+        "none";
+
+
+    let name = "";
+
+    let recycling = "";
+
+    let bin = "";
+
+    let environment = "";
+
+    let binClass = "";
+
+    let key = "";
+
+
+    if (
+        type.includes("plastic")
+    ) {
+
+        name =
+            "♻️ Plastic";
+
+        recycling =
+            "Clean plastic containers can often be recycled.";
+
+        bin =
+            "🟡 Yellow Bin — Plastic / Recyclable Waste";
+
+        environment =
+            "Recycling plastic helps reduce plastic pollution.";
+
+        binClass =
+            "bin-yellow";
+
+        key =
+            "plastic";
+
+    }
+
+
+    else if (
+        type.includes("paper")
+    ) {
+
+        name =
+            "📄 Paper";
+
+        recycling =
+            "Clean and dry paper can generally be recycled.";
+
+        bin =
+            "🔵 Blue Bin — Paper / Dry Recyclable Waste";
+
+        environment =
+            "Recycling paper helps save trees and resources.";
+
+        binClass =
+            "bin-blue";
+
+        key =
+            "paper";
+
+    }
+
+
+    else if (
+        type.includes("glass")
+    ) {
+
+        name =
+            "🍾 Glass";
+
+        recycling =
+            "Glass bottles and jars can usually be recycled.";
+
+        bin =
+            "🟢 Green Bin — Glass Waste";
+
+        environment =
+            "Glass can be recycled repeatedly without losing its quality.";
+
+        binClass =
+            "bin-green";
+
+        key =
+            "glass";
+
+    }
+
+
+    else if (
+        type.includes("metal")
+    ) {
+
+        name =
+            "🥫 Metal";
+
+        recycling =
+            "Clean metal cans and containers can be recycled.";
+
+        bin =
+            "🔵 Blue Bin — Metal / Dry Recyclable Waste";
+
+        environment =
+            "Recycling metal saves energy and reduces mining.";
+
+        binClass =
+            "bin-blue";
+
+        key =
+            "metal";
+
+    }
+
+
+    else if (
+        type.includes("organic")
+    ) {
+
+        name =
+            "🌱 Organic Waste";
+
+        recycling =
+            "Organic waste can be composted.";
+
+        bin =
+            "🟢 Green Bin — Organic / Compostable Waste";
+
+        environment =
+            "Composting organic waste helps return nutrients to the soil.";
+
+        binClass =
+            "bin-green";
+
+        key =
+            "organic";
+
+    }
+
+
+    else if (
+        type.includes("e-waste") ||
+        type.includes("ewaste") ||
+        type.includes("e waste") ||
+        type.includes("electronic")
+    ) {
+
+        name =
+            "🔌 E-Waste";
+
+        recycling =
+            "Electronic waste should be given to an authorised e-waste collection or recycling centre.";
+
+        bin =
+            "🔴 Red / Special E-Waste Collection — Do NOT mix with normal household waste";
+
+        environment =
+            "Proper e-waste recycling helps recover valuable materials and prevents harmful substances from entering the environment.";
+
+        binClass =
+            "bin-red";
+
+        key =
+            "ewaste";
+
+    }
+
+
+    else {
+
+        showUnknown();
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "detected"
+    ).innerText =
+        name;
+
+
+    document.getElementById(
+        "recycling"
+    ).innerText =
+        recycling;
+
+
+    const disposal =
+        document.getElementById(
+            "disposal"
+        );
+
+
+    disposal.innerText =
+        bin;
+
+
+    disposal.className =
+        binClass;
+
+
+    document.getElementById(
+        "environment"
+    ).innerText =
+        environment;
+
+
+    /* Update dashboard */
+
+    if (key) {
+
+        counts[key]++;
+
+        updateDashboard();
+
+        /* +10 Eco Points */
+        addEcoPoints();
+
+    }
+
+}
 
 
 /* =========================================
@@ -1893,9 +1861,8 @@ function updateDashboard() {
 }
 
 
-
 /* =========================================
-   INITIALIZE MODEL
+   START MODEL
 ========================================= */
 
 loadModel();
