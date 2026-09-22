@@ -1,810 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>EcoVision AI</title>
 
-<!-- TensorFlow -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-
-<!-- Teachable Machine -->
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
-
 <style>
-
-/* =====================================================
-   GLOBAL
-===================================================== */
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-html {
-    scroll-behavior: smooth;
+    font-family: Arial, sans-serif;
 }
 
 body {
-    background:
-        linear-gradient(135deg, #eef9f2, #f7fbf8);
+    background: #f1f8f4;
     color: #183b2a;
-    min-height: 100vh;
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
-
 header {
-    background:
-        linear-gradient(135deg, #176b45, #0d5134);
-
+    background: #176b45;
     color: white;
-
-    padding: 32px 20px;
-
+    padding: 28px 20px;
     text-align: center;
-
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 header h1 {
-    font-size: 36px;
+    font-size: 34px;
     margin-bottom: 8px;
-    letter-spacing: 0.5px;
 }
 
 header p {
     font-size: 15px;
-    opacity: 0.9;
+    opacity: 0.92;
 }
-
-
-/* =====================================================
-   MAIN CONTAINER
-===================================================== */
 
 .container {
     width: 100%;
     max-width: 1100px;
     margin: auto;
-    padding: 28px 18px 40px;
+    padding: 25px 15px;
 }
-
-
-/* =====================================================
-   COMMON CARDS
-===================================================== */
 
 .hero,
-.camera-card,
 .result,
-.dashboard {
+.stat {
     background: white;
-
-    border-radius: 24px;
-
-    box-shadow:
-        0 10px 35px rgba(24, 59, 42, 0.09);
-
-    border: 1px solid rgba(23, 107, 69, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
 }
 
-
-/* =====================================================
-   HERO
-===================================================== */
-
 .hero {
-    padding: 30px 25px;
+    padding: 28px;
     text-align: center;
     margin-bottom: 22px;
 }
 
 .hero h2 {
-    font-size: 28px;
+    font-size: 27px;
     margin-bottom: 10px;
-    color: #164b32;
 }
 
 .hero p {
     color: #607568;
     line-height: 1.6;
-    max-width: 700px;
-    margin: auto;
 }
-
-
-/* =====================================================
-   BUTTONS
-===================================================== */
 
 .buttons {
     display: flex;
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 24px;
+    margin-top: 22px;
 }
 
 button,
 .upload-label {
     border: none;
-
-    border-radius: 14px;
-
+    border-radius: 13px;
     padding: 14px 22px;
-
     font-size: 15px;
-
-    font-weight: 700;
-
+    font-weight: bold;
     cursor: pointer;
-
-    background:
-        linear-gradient(135deg, #176b45, #218653);
-
+    background: #176b45;
     color: white;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-
-    box-shadow:
-        0 7px 18px rgba(23, 107, 69, 0.18);
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    transition: 0.2s;
 }
 
 button:hover,
 .upload-label:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 22px rgba(23, 107, 69, 0.25);
-
-    background:
-        linear-gradient(135deg, #125637, #176b45);
-}
-
-button:active,
-.upload-label:active {
-    transform: translateY(0);
+    background: #125637;
+    transform: translateY(-1px);
 }
 
 button:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
 }
 
 input[type="file"] {
     display: none;
 }
 
+/* ================================
+   CAMERA
+================================ */
 
-/* =====================================================
-   STATUS
-===================================================== */
-
-#status {
-    margin-top: 20px;
-
-    display: inline-block;
-
-    padding: 10px 16px;
-
-    border-radius: 30px;
-
-    background: #eef7f1;
-
-    color: #176b45;
-
-    font-size: 14px;
-
-    font-weight: 700;
-}
-
-
-/* =====================================================
-   CAMERA CARD
-===================================================== */
-
-.camera-card {
-    margin-top: 22px;
-    padding: 25px 18px 30px;
-    text-align: center;
-}
-
-.camera-title {
-    font-size: 21px;
-    font-weight: 800;
-    margin-bottom: 18px;
-    color: #164b32;
-}
-
-
-/* =====================================================
-   CAMERA AREA
-===================================================== */
-
-#camera-area,
-#image-area {
-
+#camera-area {
     width: 100%;
-
-    margin: 0 auto;
-
+    margin: 22px auto;
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
-    padding: 0 8px;
 }
-
-
-/* =====================================================
-   LARGE CAMERA
-===================================================== */
 
 #camera-video,
 #captured-image {
-
     width: min(760px, 100%);
-
     max-width: 100%;
-
     aspect-ratio: 16 / 9;
-
     object-fit: cover;
+    border-radius: 22px;
+    background: #111;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+}
 
-    border-radius: 24px;
-
-    background: #07130d;
-
-    border: 3px solid rgba(23, 107, 69, 0.14);
-
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.18);
-
+#camera-video {
     display: block;
 }
 
-
-/* =====================================================
-   UPLOADED IMAGE
-===================================================== */
-
-#uploaded-image {
-
-    width: min(760px, 100%);
-
-    max-width: 100%;
-
-    max-height: 600px;
-
-    object-fit: contain;
-
-    border-radius: 24px;
-
-    display: none;
-
-    border: 3px solid rgba(23, 107, 69, 0.12);
-
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.15);
+#captured-image {
+    display: block;
 }
 
+/* ================================
+   UPLOAD IMAGE
+================================ */
 
-/* =====================================================
-   RESULT CARD
-===================================================== */
+#image-area {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+#uploaded-image {
+    max-width: 760px;
+    width: 100%;
+    border-radius: 22px;
+    display: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+/* ================================
+   STATUS
+================================ */
+
+#status {
+    margin-top: 17px;
+    color: #607568;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
+/* ================================
+   RESULT
+================================ */
 
 .result {
-
     margin-top: 25px;
-
-    padding: 30px 25px;
-
+    padding: 30px;
     text-align: center;
 }
 
 .result h2 {
-
     font-size: 25px;
-
-    color: #164b32;
-
     margin-bottom: 15px;
 }
 
-
-/* =====================================================
-   DETECTED
-===================================================== */
-
 #detected {
-
-    font-size: 34px;
-
-    font-weight: 900;
-
+    font-size: 32px;
+    font-weight: bold;
     color: #176b45;
-
-    margin: 12px 0 8px;
+    margin: 12px 0;
 }
-
-
-/* =====================================================
-   CONFIDENCE
-===================================================== */
 
 #confidence {
-
-    display: inline-block;
-
     color: #65756c;
-
-    background: #f1f6f3;
-
-    padding: 8px 14px;
-
-    border-radius: 30px;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    margin-bottom: 20px;
+    font-size: 16px;
+    margin-bottom: 18px;
 }
 
-
-/* =====================================================
-   RESULT INFORMATION
-===================================================== */
+/* ================================
+   BIN RESULT
+================================ */
 
 .info-box {
-
-    margin-top: 10px;
-
-    background:
-        linear-gradient(135deg, #f4faf6, #edf7f0);
-
-    border-radius: 20px;
-
+    margin-top: 18px;
+    background: #eef7f1;
+    border-radius: 18px;
     padding: 22px;
-
     text-align: left;
-
-    border: 1px solid rgba(23, 107, 69, 0.08);
 }
 
-.info-item {
-
-    padding: 16px 0;
-
-    border-bottom:
-        1px solid rgba(24, 59, 42, 0.08);
+.info-box p {
+    margin: 13px 0;
+    line-height: 1.6;
 }
 
-.info-item:last-child {
-    border-bottom: none;
-}
-
-.info-item strong {
-
+.info-box strong {
     display: block;
-
-    margin-bottom: 8px;
-
-    font-size: 15px;
-
-    color: #315c45;
-}
-
-.info-item span {
-
-    display: block;
-
-    color: #42594d;
-
-    line-height: 1.55;
-
+    margin-bottom: 5px;
     font-size: 15px;
 }
-
-
-/* =====================================================
-   BIN BADGE
-===================================================== */
 
 #disposal {
-
-    display: inline-block !important;
-
-    padding: 12px 18px;
-
+    display: block;
+    margin-top: 7px;
+    padding: 17px 18px;
     border-radius: 14px;
-
-    font-size: 18px !important;
-
-    font-weight: 900 !important;
-
-    line-height: 1.4 !important;
-
-    background: #eef7f1;
-
-    color: #176b45;
+    font-size: 21px;
+    font-weight: 800;
+    text-align: center;
 }
 
+/* Bin colours */
 
-/* BIN COLORS */
+.bin-yellow {
+    background: #fff3a6;
+    color: #654d00;
+}
 
 .bin-blue {
-
-    background: #dceeff !important;
-
-    color: #07589d !important;
-
-    border: 2px solid #9acbfa;
+    background: #cfe4ff;
+    color: #084b91;
 }
 
 .bin-red {
-
-    background: #ffe2e2 !important;
-
-    color: #b51f1f !important;
-
-    border: 2px solid #ffaaaa;
+    background: #ffd4d4;
+    color: #a40000;
 }
 
 .bin-green {
-
-    background: #dcf7df !important;
-
-    color: #16702a !important;
-
-    border: 2px solid #a7e6ae;
-}
-
-.bin-yellow {
-
-    background: #fff4c7 !important;
-
-    color: #8b6500 !important;
-
-    border: 2px solid #f2d56b;
+    background: #cfeeda;
+    color: #126332;
 }
 
 .bin-grey {
-
-    background: #eeeeee !important;
-
-    color: #555555 !important;
-
-    border: 2px solid #cccccc;
+    background: #e4e4e4;
+    color: #444;
 }
 
 .bin-warning {
-
-    background: #ffe7c7 !important;
-
-    color: #9a5500 !important;
-
-    border: 2px solid #f2bf78;
+    background: #fff0d2;
+    color: #8a5100;
 }
 
+/* ================================
+   UNKNOWN RESULT
+================================ */
 
-/* =====================================================
+.unknown-result {
+    background: #fff7df;
+    border: 2px solid #f0c75e;
+    border-radius: 18px;
+    padding: 22px;
+    margin-top: 18px;
+}
+
+.unknown-result h3 {
+    color: #875900;
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+.unknown-result p {
+    color: #765d28;
+    line-height: 1.5;
+}
+
+/* ================================
    DASHBOARD
-===================================================== */
+================================ */
 
 .dashboard {
-
-    margin-top: 25px;
-
-    padding: 28px 20px;
+    margin-top: 28px;
 }
 
 .dashboard h2 {
-
     text-align: center;
-
-    margin-bottom: 20px;
-
-    font-size: 25px;
-
-    color: #164b32;
+    margin-bottom: 17px;
 }
 
 .stats {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
-    gap: 14px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 13px;
 }
 
 .stat {
-
-    background:
-        linear-gradient(145deg, #f8fcf9, #eef7f1);
-
-    padding: 20px 12px;
-
+    padding: 20px;
     text-align: center;
-
-    border-radius: 18px;
-
-    border: 1px solid rgba(23, 107, 69, 0.08);
-
-    transition: transform 0.2s ease;
-}
-
-.stat:hover {
-
-    transform: translateY(-3px);
 }
 
 .stat h3 {
-
-    font-size: 30px;
-
+    font-size: 28px;
     color: #176b45;
-
-    margin-bottom: 5px;
 }
 
 .stat p {
-
+    margin-top: 6px;
     color: #65756c;
-
-    font-size: 14px;
-
-    font-weight: 600;
 }
 
-
-/* =====================================================
+/* ================================
    FOOTER
-===================================================== */
+================================ */
 
 footer {
-
     text-align: center;
-
     padding: 28px 15px;
-
     color: #65756c;
-
-    font-size: 13px;
 }
 
-
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width: 850px) {
-
-    header h1 {
-        font-size: 32px;
-    }
-
-    .stats {
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-    #camera-video,
-    #captured-image {
-        width: 100%;
-        aspect-ratio: 4 / 3;
-    }
-}
-
-
-/* =====================================================
+/* ================================
    MOBILE
-===================================================== */
+================================ */
 
-@media (max-width: 600px) {
-
-    body {
-        background: #f4faf6;
-    }
+@media (max-width: 700px) {
 
     header {
-        padding: 24px 15px;
+        padding: 23px 15px;
     }
 
     header h1 {
         font-size: 28px;
     }
 
-    header p {
-        font-size: 13px;
-    }
-
     .container {
-        padding: 14px 10px 30px;
+        padding: 15px 10px;
     }
 
     .hero {
         padding: 22px 16px;
-        border-radius: 20px;
     }
 
     .hero h2 {
         font-size: 23px;
     }
 
-    .hero p {
-        font-size: 14px;
-    }
-
     .buttons {
-
-        display: grid;
-
-        grid-template-columns: 1fr;
-
-        gap: 10px;
-
-        margin-top: 20px;
+        flex-direction: column;
+        width: 100%;
     }
 
     button,
     .upload-label {
-
         width: 100%;
-
-        padding: 15px 12px;
-
-        font-size: 15px;
-
-        border-radius: 13px;
-    }
-
-    #status {
-
-        font-size: 12px;
-
-        line-height: 1.4;
-    }
-
-    .camera-card {
-
-        padding: 20px 10px 25px;
-
-        border-radius: 20px;
-    }
-
-    .camera-title {
-        font-size: 19px;
+        padding: 14px 15px;
     }
 
     #camera-video,
     #captured-image {
-
         width: 100%;
-
         aspect-ratio: 4 / 3;
-
-        border-radius: 19px;
-    }
-
-    #uploaded-image {
-
-        width: 100%;
-
-        border-radius: 19px;
-    }
-
-    .result {
-
-        padding: 23px 15px;
-
-        border-radius: 20px;
-    }
-
-    .result h2 {
-        font-size: 22px;
+        border-radius: 18px;
     }
 
     #detected {
-        font-size: 28px;
-    }
-
-    #confidence {
-        font-size: 12px;
-    }
-
-    .info-box {
-        padding: 16px;
-        border-radius: 17px;
-    }
-
-    .info-item {
-        padding: 14px 0;
-    }
-
-    .info-item span {
-        font-size: 14px;
+        font-size: 27px;
     }
 
     #disposal {
-        font-size: 16px !important;
-        padding: 10px 13px;
+        font-size: 18px;
+        padding: 16px 10px;
     }
 
-    .dashboard {
-        padding: 22px 12px;
-        border-radius: 20px;
+    .result {
+        padding: 22px 15px;
     }
 
-    .dashboard h2 {
-        font-size: 22px;
+    .info-box {
+        padding: 17px 14px;
     }
 
     .stats {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .stat {
-        padding: 16px 8px;
-        border-radius: 15px;
-    }
-
-    .stat h3 {
-        font-size: 26px;
-    }
-
-    .stat p {
-        font-size: 12px;
-    }
-
-    footer {
-        font-size: 11px;
+    .stat:last-child {
+        grid-column: span 2;
     }
 }
 
 </style>
-
 </head>
 
-
 <body>
-
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
 
 <header>
 
@@ -817,81 +414,50 @@ footer {
 </header>
 
 
-
 <div class="container">
 
 
-<!-- =====================================================
-     HERO
-===================================================== -->
-
 <section class="hero">
 
-    <h2>
-        Identify Your Waste ♻️
-    </h2>
+    <h2>Identify Your Waste</h2>
 
     <p>
-
-        Capture a waste item using your camera
-        or upload an image. Our AI will identify
-        the waste category and suggest the
-        appropriate disposal method.
-
+        Use your phone's back camera or upload an image.
+        EcoVision AI will identify the waste category and suggest
+        the appropriate bin.
     </p>
 
 
     <div class="buttons">
 
-
-        <!-- START CAMERA -->
-
-        <button
-            onclick="startCamera()"
-            id="startCameraBtn">
-
+        <button onclick="startCamera()">
             📷 Start Camera
-
         </button>
 
-
-        <!-- CAPTURE -->
 
         <button
             id="captureBtn"
             onclick="capturePhoto()"
             disabled>
-
             📸 Capture Photo
-
         </button>
 
-
-        <!-- RETAKE -->
 
         <button
             id="retakeBtn"
             onclick="retakePhoto()"
             disabled>
-
-            🔄 Retake
-
+            🔄 Scan Again
         </button>
 
-
-        <!-- CONFIRM -->
 
         <button
             id="confirmBtn"
             onclick="confirmScan()"
             disabled>
-
             ✅ Confirm Scan
-
         </button>
 
-
-        <!-- UPLOAD -->
 
         <label class="upload-label">
 
@@ -905,7 +471,6 @@ footer {
 
         </label>
 
-
     </div>
 
 
@@ -917,46 +482,35 @@ footer {
 
 
 
-<!-- =====================================================
-     CAMERA
-===================================================== -->
+<!-- CAMERA -->
 
-<section class="camera-card">
+<section id="camera-area">
 
-    <div class="camera-title">
-        📷 Camera Preview
-    </div>
-
-
-    <section id="camera-area">
-
-        <video
-            id="camera-video"
-            autoplay
-            playsinline
-            muted
-            style="display:none;">
-
-        </video>
-
-    </section>
-
-
-    <section id="image-area">
-
-        <img
-            id="uploaded-image"
-            alt="Uploaded waste">
-
-    </section>
+    <video
+        id="camera-video"
+        autoplay
+        playsinline
+        muted
+        style="display:none;">
+    </video>
 
 </section>
 
 
 
-<!-- =====================================================
-     RESULT
-===================================================== -->
+<!-- UPLOADED IMAGE -->
+
+<section id="image-area">
+
+    <img
+        id="uploaded-image"
+        alt="Uploaded waste">
+
+</section>
+
+
+
+<!-- RESULT -->
 
 <section class="result">
 
@@ -975,53 +529,65 @@ footer {
     </div>
 
 
+    <div id="unknownMessage"
+         class="unknown-result"
+         style="display:none;">
+
+        <h3>
+            ⚠️ I Can't Recognize This Item Clearly
+        </h3>
+
+        <p>
+            Please capture another photo with the waste item
+            clearly visible and try again.
+        </p>
+
+    </div>
+
+
     <div class="info-box">
 
-
-        <!-- RECYCLING -->
-
-        <div class="info-item">
+        <p>
 
             <strong>
-                ♻️ Recycling Information
+                ♻️ Recycling:
             </strong>
 
             <span id="recycling">
                 -
             </span>
 
-        </div>
+        </p>
 
 
-        <!-- BIN -->
-
-        <div class="info-item">
+        <p>
 
             <strong>
-                🗑️ Recommended Bin
+                🗑️ Recommended Bin:
             </strong>
 
-            <span id="disposal">
+            <span
+                id="disposal"
+                class="bin-warning">
+
                 -
+
             </span>
 
-        </div>
+        </p>
 
 
-        <!-- ENVIRONMENT -->
-
-        <div class="info-item">
+        <p>
 
             <strong>
-                🌱 Environmental Information
+                🌱 Environmental Info:
             </strong>
 
             <span id="environment">
                 -
             </span>
 
-        </div>
-
+        </p>
 
     </div>
 
@@ -1029,9 +595,7 @@ footer {
 
 
 
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
+<!-- DASHBOARD -->
 
 <section class="dashboard">
 
@@ -1116,15 +680,9 @@ footer {
 </div>
 
 
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
 <footer>
 
-    EcoVision AI © 2026
-    |
+    EcoVision AI © 2026 |
     AI for Sustainable Waste Management
 
 </footer>
@@ -1133,10 +691,9 @@ footer {
 
 <script>
 
-
-/* =====================================================
+/* =========================================
    TEACHABLE MACHINE MODEL
-===================================================== */
+========================================= */
 
 const MODEL_URL =
     "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
@@ -1153,9 +710,19 @@ let cameraRunning = false;
 let capturedImage = null;
 
 
-/* =====================================================
-   DASHBOARD COUNTS
-===================================================== */
+/* =========================================
+   CONFIDENCE THRESHOLD
+
+   Below this value:
+   AI will NOT guess the bin.
+========================================= */
+
+const CONFIDENCE_THRESHOLD = 0.60;
+
+
+/* =========================================
+   DASHBOARD
+========================================= */
 
 let counts = {
 
@@ -1172,9 +739,10 @@ let counts = {
 };
 
 
-/* =====================================================
+
+/* =========================================
    LOAD MODEL
-===================================================== */
+========================================= */
 
 async function loadModel() {
 
@@ -1187,11 +755,10 @@ async function loadModel() {
             MODEL_URL + "metadata.json";
 
 
-        model =
-            await tmImage.load(
-                modelURL,
-                metadataURL
-            );
+        model = await tmImage.load(
+            modelURL,
+            metadataURL
+        );
 
 
         document.getElementById(
@@ -1204,19 +771,104 @@ async function loadModel() {
 
         console.error(error);
 
-
         document.getElementById(
             "status"
         ).innerText =
             "❌ AI Model could not be loaded.";
 
     }
+
 }
 
 
-/* =====================================================
+
+/* =========================================
+   STOP EXISTING CAMERA
+========================================= */
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(track => {
+
+                track.stop();
+
+            });
+
+        stream = null;
+    }
+
+
+    if (video) {
+
+        try {
+
+            video.pause();
+
+        } catch (e) {}
+
+        video.srcObject = null;
+
+    }
+
+
+    cameraRunning = false;
+
+}
+
+
+
+/* =========================================
+   CREATE FRESH VIDEO ELEMENT
+========================================= */
+
+function createVideoElement() {
+
+    const cameraArea =
+        document.getElementById(
+            "camera-area"
+        );
+
+
+    cameraArea.innerHTML = "";
+
+
+    const newVideo =
+        document.createElement(
+            "video"
+        );
+
+
+    newVideo.id =
+        "camera-video";
+
+
+    newVideo.autoplay = true;
+
+    newVideo.playsInline = true;
+
+    newVideo.muted = true;
+
+
+    cameraArea.appendChild(
+        newVideo
+    );
+
+
+    video = newVideo;
+
+    return newVideo;
+
+}
+
+
+
+/* =========================================
    START CAMERA
-===================================================== */
+========================================= */
 
 async function startCamera() {
 
@@ -1227,93 +879,145 @@ async function startCamera() {
         );
 
         return;
+
+    }
+
+
+    /*
+       If camera is already running,
+       DON'T restart it.
+    */
+
+    if (
+        cameraRunning &&
+        stream &&
+        video
+    ) {
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "📷 Camera is already running.";
+
+        return;
+
     }
 
 
     try {
 
+        /*
+           Clean any old camera first.
+        */
 
-        /* ---------------------------------------------
-           STOP OLD CAMERA IF ANY
-        --------------------------------------------- */
-
-        if (stream) {
-
-            stream
-                .getTracks()
-                .forEach(
-                    track => track.stop()
-                );
-
-            stream = null;
-        }
+        stopCamera();
 
 
-        /* ---------------------------------------------
-           RESET CAMERA AREA
-        --------------------------------------------- */
-
-        const cameraArea =
-            document.getElementById(
-                "camera-area"
-            );
-
-
-        cameraArea.innerHTML = `
-
-            <video
-                id="camera-video"
-                autoplay
-                playsinline
-                muted>
-            </video>
-
-        `;
-
+        /*
+           Create fresh video element.
+        */
 
         video =
-            document.getElementById(
-                "camera-video"
+            createVideoElement();
+
+
+        /*
+           IMPORTANT:
+
+           facingMode: environment
+           means REAR / BACK camera
+           on supported phones.
+        */
+
+        let constraints = {
+
+            audio: false,
+
+            video: {
+
+                facingMode: {
+                    exact: "environment"
+                },
+
+                width: {
+                    ideal: 1280
+                },
+
+                height: {
+                    ideal: 720
+                }
+
+            }
+
+        };
+
+
+        try {
+
+            stream =
+                await navigator
+                    .mediaDevices
+                    .getUserMedia(
+                        constraints
+                    );
+
+        } catch (backCameraError) {
+
+            console.warn(
+                "Exact rear camera unavailable:",
+                backCameraError
             );
 
 
-        /* ---------------------------------------------
-           START NORMAL CAMERA
-        --------------------------------------------- */
+            /*
+               Some browsers don't accept
+               exact environment mode.
 
-        stream =
-            await navigator.mediaDevices.getUserMedia({
+               Try ideal environment.
+            */
 
-                video: {
+            stream =
+                await navigator
+                    .mediaDevices
+                    .getUserMedia({
 
-                    width: {
-                        ideal: 1280
-                    },
+                        audio: false,
 
-                    height: {
-                        ideal: 720
-                    }
+                        video: {
 
-                },
+                            facingMode: {
+                                ideal: "environment"
+                            },
 
-                audio: false
+                            width: {
+                                ideal: 1280
+                            },
 
-            });
+                            height: {
+                                ideal: 720
+                            }
+
+                        }
+
+                    });
+
+        }
 
 
         video.srcObject =
             stream;
 
 
+        video.style.display =
+            "block";
+
+
         await video.play();
 
 
-        cameraRunning = true;
+        cameraRunning =
+            true;
 
-
-        /* ---------------------------------------------
-           BUTTON STATES
-        --------------------------------------------- */
 
         document.getElementById(
             "captureBtn"
@@ -1330,24 +1034,10 @@ async function startCamera() {
         ).disabled = true;
 
 
-        /* ---------------------------------------------
-           HIDE PREVIOUS UPLOAD
-        --------------------------------------------- */
-
-        const uploadedImage =
-            document.getElementById(
-                "uploaded-image"
-            );
-
-
-        uploadedImage.style.display =
-            "none";
-
-
         document.getElementById(
             "status"
         ).innerText =
-            "📷 Camera ready. Place the waste item in front of the camera.";
+            "📷 Back camera ready. Place the waste item clearly in front of the camera.";
 
 
     } catch (error) {
@@ -1358,35 +1048,72 @@ async function startCamera() {
         );
 
 
-        cameraRunning = false;
+        stopCamera();
+
+
+        let message =
+            "❌ Camera could not be opened.";
+
+
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
+
+            message =
+                "❌ Camera permission denied. Please allow camera access in your browser.";
+
+        }
+
+        else if (
+            error.name ===
+            "NotFoundError"
+        ) {
+
+            message =
+                "❌ No suitable camera was found on this device.";
+
+        }
+
+        else if (
+            error.name ===
+            "NotReadableError"
+        ) {
+
+            message =
+                "❌ Camera is already being used by another app.";
+
+        }
 
 
         document.getElementById(
             "status"
         ).innerText =
-            "❌ Camera could not be started.";
+            message;
 
 
-        alert(
-            "Camera access nahi mila. Please browser camera permission allow karo."
-        );
+        alert(message);
 
     }
+
 }
 
 
-/* =====================================================
+
+/* =========================================
    CAPTURE PHOTO
-===================================================== */
+========================================= */
 
 function capturePhoto() {
 
     if (
         !video ||
-        !cameraRunning
+        !cameraRunning ||
+        !stream
     ) {
 
         return;
+
     }
 
 
@@ -1431,6 +1158,10 @@ function capturePhoto() {
         canvas;
 
 
+    /*
+       Stop camera after capture.
+    */
+
     stopCamera();
 
 
@@ -1453,8 +1184,6 @@ function capturePhoto() {
     );
 
 
-    /* BUTTONS */
-
     document.getElementById(
         "captureBtn"
     ).disabled = true;
@@ -1473,56 +1202,42 @@ function capturePhoto() {
     document.getElementById(
         "status"
     ).innerText =
-        "📸 Photo captured. Check it and click Confirm Scan.";
+        "📸 Photo captured. Check the image and click Confirm Scan.";
 
 }
 
 
-/* =====================================================
-   STOP CAMERA
-===================================================== */
 
-function stopCamera() {
+/* =========================================
+   RETAKE / SCAN AGAIN
+========================================= */
 
-    if (stream) {
+async function retakePhoto() {
 
-        stream
-            .getTracks()
-            .forEach(
-                track => track.stop()
-            );
-
-        stream = null;
-    }
+    capturedImage = null;
 
 
-    cameraRunning =
-        false;
-}
+    /*
+       Hide old uploaded image.
+    */
+
+    const uploaded =
+        document.getElementById(
+            "uploaded-image"
+        );
 
 
-/* =====================================================
-   RETAKE PHOTO
-===================================================== */
+    uploaded.style.display =
+        "none";
 
-function retakePhoto() {
 
-    capturedImage =
-        null;
-
+    /*
+       Reset buttons.
+    */
 
     document.getElementById(
-        "camera-area"
-    ).innerHTML = `
-
-        <video
-            id="camera-video"
-            autoplay
-            playsinline
-            muted>
-        </video>
-
-    `;
+        "captureBtn"
+    ).disabled = true;
 
 
     document.getElementById(
@@ -1535,19 +1250,30 @@ function retakePhoto() {
     ).disabled = true;
 
 
+    /*
+       Clear previous unknown message.
+    */
+
     document.getElementById(
-        "captureBtn"
-    ).disabled = true;
+        "unknownMessage"
+    ).style.display =
+        "none";
 
 
-    startCamera();
+    /*
+       Start camera again.
+       NO RELOAD REQUIRED.
+    */
+
+    await startCamera();
 
 }
 
 
-/* =====================================================
+
+/* =========================================
    CONFIRM SCAN
-===================================================== */
+========================================= */
 
 async function confirmScan() {
 
@@ -1557,6 +1283,7 @@ async function confirmScan() {
     ) {
 
         return;
+
     }
 
 
@@ -1578,20 +1305,21 @@ async function confirmScan() {
 
     document.getElementById(
         "retakeBtn"
-    ).disabled = true;
+    ).disabled = false;
 
 
     document.getElementById(
         "status"
     ).innerText =
-        "✅ Scan confirmed successfully.";
+        "✅ Scan completed. You can scan another item anytime.";
 
 }
 
 
-/* =====================================================
+
+/* =========================================
    UPLOAD IMAGE
-===================================================== */
+========================================= */
 
 function handleImage(event) {
 
@@ -1602,8 +1330,13 @@ function handleImage(event) {
     if (!file) {
 
         return;
+
     }
 
+
+    /*
+       Stop camera if it is running.
+    */
 
     stopCamera();
 
@@ -1634,9 +1367,27 @@ function handleImage(event) {
         "block";
 
 
-    image.onload =
-        async function () {
+    /*
+       Reset camera buttons.
+    */
 
+    document.getElementById(
+        "captureBtn"
+    ).disabled = true;
+
+
+    document.getElementById(
+        "retakeBtn"
+    ).disabled = true;
+
+
+    document.getElementById(
+        "confirmBtn"
+    ).disabled = true;
+
+
+    image.onload =
+        async function() {
 
             if (!model) {
 
@@ -1645,6 +1396,7 @@ function handleImage(event) {
                 );
 
                 return;
+
             }
 
 
@@ -1669,16 +1421,16 @@ function handleImage(event) {
 }
 
 
-/* =====================================================
+
+/* =========================================
    AI PREDICTION
-===================================================== */
+========================================= */
 
 async function predict(
     imageElement
 ) {
 
     try {
-
 
         const prediction =
             await model.predict(
@@ -1694,15 +1446,19 @@ async function predict(
             "Unknown";
 
 
+        /*
+           Find highest prediction.
+        */
+
         for (
             let i = 0;
             i < prediction.length;
             i++
         ) {
 
-
             const probability =
-                prediction[i].probability;
+                prediction[i]
+                    .probability;
 
 
             if (
@@ -1715,22 +1471,39 @@ async function predict(
 
 
                 detectedClass =
-                    prediction[i].className;
+                    prediction[i]
+                        .className;
 
             }
 
         }
 
 
-        showResult(
+        console.log(
+            "Prediction:",
             detectedClass,
             highestProbability
         );
 
 
+        /*
+           Send result.
+        */
+
+        showResult(
+
+            detectedClass,
+
+            highestProbability
+
+        );
+
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
 
         document.getElementById(
@@ -1739,18 +1512,19 @@ async function predict(
             "❌ Error while analyzing image.";
 
     }
+
 }
 
 
-/* =====================================================
+
+/* =========================================
    SHOW RESULT
-===================================================== */
+========================================= */
 
 function showResult(
     className,
     probability
 ) {
-
 
     const name =
         className
@@ -1758,9 +1532,97 @@ function showResult(
             .trim();
 
 
-    /* ---------------------------------------------
-       DETECTED CLASS
-    --------------------------------------------- */
+    const percentage =
+        probability * 100;
+
+
+    /*
+       Reset unknown message.
+    */
+
+    const unknownMessage =
+        document.getElementById(
+            "unknownMessage"
+        );
+
+
+    unknownMessage.style.display =
+        "none";
+
+
+    /*
+       Reset disposal.
+    */
+
+    const disposal =
+        document.getElementById(
+            "disposal"
+        );
+
+
+    disposal.className =
+        "bin-warning";
+
+
+    /*
+       IMPORTANT:
+
+       If confidence is below 60%,
+       DON'T guess the waste category.
+    */
+
+    if (
+        probability <
+        CONFIDENCE_THRESHOLD
+    ) {
+
+        document.getElementById(
+            "detected"
+        ).innerText =
+            "❓ Unknown Item";
+
+
+        document.getElementById(
+            "confidence"
+        ).innerText =
+            "AI Confidence: " +
+            percentage.toFixed(1) +
+            "%";
+
+
+        document.getElementById(
+            "recycling"
+        ).innerText =
+            "The AI could not identify this item clearly.";
+
+
+        disposal.innerText =
+            "⚠️ No Bin Recommendation";
+
+
+        disposal.className =
+            "bin-warning";
+
+
+        document.getElementById(
+            "environment"
+        ).innerText =
+            "Please take another clear photo with the complete item visible.";
+
+
+        unknownMessage.style.display =
+            "block";
+
+
+        return;
+
+    }
+
+
+
+    /*
+       Normal recognized result.
+    */
 
     document.getElementById(
         "detected"
@@ -1768,43 +1630,38 @@ function showResult(
         "♻️ " + className;
 
 
-    /* ---------------------------------------------
-       CONFIDENCE
-    --------------------------------------------- */
-
     document.getElementById(
         "confidence"
     ).innerText =
         "AI Confidence: " +
-        (
-            probability * 100
-        ).toFixed(1) +
+        percentage.toFixed(1) +
         "%";
+
 
 
     let recycling = "";
 
-    let disposal = "";
+    let binText = "";
 
     let environment = "";
 
     let binClass = "";
 
 
-    /* =================================================
+
+    /* ============================
        PLASTIC
-    ================================================= */
+    ============================ */
 
     if (
         name.includes("plastic")
     ) {
 
-
         recycling =
             "Plastic items may be recyclable depending on the type and local rules.";
 
 
-        disposal =
+        binText =
             "🟨 Yellow Bin — Plastic Waste";
 
 
@@ -1821,20 +1678,20 @@ function showResult(
     }
 
 
-    /* =================================================
+
+    /* ============================
        PAPER
-    ================================================= */
+    ============================ */
 
     else if (
         name.includes("paper")
     ) {
 
-
         recycling =
             "Clean and dry paper is generally recyclable.";
 
 
-        disposal =
+        binText =
             "🟦 Blue Bin — Paper Waste";
 
 
@@ -1851,20 +1708,20 @@ function showResult(
     }
 
 
-    /* =================================================
+
+    /* ============================
        GLASS
-    ================================================= */
+    ============================ */
 
     else if (
         name.includes("glass")
     ) {
 
-
         recycling =
             "Glass bottles and jars can commonly be recycled.";
 
 
-        disposal =
+        binText =
             "⬜ White/Grey Bin — Glass Waste";
 
 
@@ -1881,20 +1738,20 @@ function showResult(
     }
 
 
-    /* =================================================
+
+    /* ============================
        METAL
-    ================================================= */
+    ============================ */
 
     else if (
         name.includes("metal")
     ) {
 
-
         recycling =
             "Many metal cans and containers are recyclable.";
 
 
-        disposal =
+        binText =
             "🟥 Red Bin — Metal Waste";
 
 
@@ -1911,26 +1768,22 @@ function showResult(
     }
 
 
-    /* =================================================
+
+    /* ============================
        ORGANIC
-    ================================================= */
+    ============================ */
 
     else if (
-
         name.includes("organic") ||
-
         name.includes("food") ||
-
         name.includes("biodegradable")
-
     ) {
-
 
         recycling =
             "Organic waste can often be composted.";
 
 
-        disposal =
+        binText =
             "🟩 Green Bin — Organic/Biodegradable Waste";
 
 
@@ -1947,34 +1800,60 @@ function showResult(
     }
 
 
-    /* =================================================
-       UNKNOWN
-    ================================================= */
+
+    /* ============================
+       UNKNOWN CLASS
+    ============================ */
 
     else {
 
-
-        recycling =
-            "Please check local waste-management guidelines.";
-
-
-        disposal =
-            "⚠️ Waste category not recognized.";
+        document.getElementById(
+            "detected"
+        ).innerText =
+            "❓ Unknown Item";
 
 
-        environment =
-            "Correct waste segregation helps improve waste management.";
+        document.getElementById(
+            "confidence"
+        ).innerText =
+            "AI Confidence: " +
+            percentage.toFixed(1) +
+            "%";
 
 
-        binClass =
+        document.getElementById(
+            "recycling"
+        ).innerText =
+            "The AI detected an unfamiliar category.";
+
+
+        disposal.innerText =
+            "⚠️ No Bin Recommendation";
+
+
+        disposal.className =
             "bin-warning";
+
+
+        document.getElementById(
+            "environment"
+        ).innerText =
+            "Please capture another clear image.";
+
+
+        unknownMessage.style.display =
+            "block";
+
+
+        return;
 
     }
 
 
-    /* =================================================
-       UPDATE RESULT
-    ================================================= */
+
+    /*
+       Put normal result on screen.
+    */
 
     document.getElementById(
         "recycling"
@@ -1982,40 +1861,12 @@ function showResult(
         recycling;
 
 
-    const disposalElement =
-        document.getElementById(
-            "disposal"
-        );
+    disposal.innerText =
+        binText;
 
 
-    disposalElement.innerText =
-        disposal;
-
-
-    /* Remove previous bin classes */
-
-    disposalElement.classList.remove(
-
-        "bin-blue",
-
-        "bin-red",
-
-        "bin-green",
-
-        "bin-yellow",
-
-        "bin-grey",
-
-        "bin-warning"
-
-    );
-
-
-    /* Add correct bin color */
-
-    disposalElement.classList.add(
-        binClass
-    );
+    disposal.className =
+        binClass;
 
 
     document.getElementById(
@@ -2027,34 +1878,28 @@ function showResult(
     updateDashboard();
 
 
-    /* Scroll result into view on mobile */
 
-    setTimeout(
-        function () {
+    /*
+       Automatically scroll result
+       into view on mobile.
+    */
 
-            document
-                .querySelector(".result")
-                .scrollIntoView({
-
-                    behavior: "smooth",
-
-                    block: "start"
-
-                });
-
-        },
-        150
-    );
+    document
+        .querySelector(".result")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
 
 }
 
 
-/* =====================================================
+
+/* =========================================
    UPDATE DASHBOARD
-===================================================== */
+========================================= */
 
 function updateDashboard() {
-
 
     document.getElementById(
         "plasticCount"
@@ -2088,29 +1933,30 @@ function updateDashboard() {
 }
 
 
-/* =====================================================
-   LOAD AI MODEL ON PAGE LOAD
-===================================================== */
 
-loadModel();
-
-
-/* =====================================================
-   CLEAN CAMERA WHEN PAGE CLOSES
-===================================================== */
+/* =========================================
+   PAGE CLOSE
+   STOP CAMERA
+========================================= */
 
 window.addEventListener(
     "beforeunload",
-    function () {
+    function() {
 
         stopCamera();
 
     }
 );
 
+
+
+/* =========================================
+   START AI
+========================================= */
+
+loadModel();
+
 </script>
 
-
 </body>
-
 </html>
