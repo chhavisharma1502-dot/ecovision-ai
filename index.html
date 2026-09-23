@@ -147,7 +147,7 @@ input[type="file"] {
 
 #camera-video,
 #captured-image {
-    width: min(760px, 100%);
+    width: min(850px, 100%);
     max-width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
@@ -778,7 +778,7 @@ footer {
 ========================================= */
 
 const MODEL_URL =
-    "https://teachablemachine.withgoogle.com/models/cN9A5g3T1/";
+    "https://teachablemachine.withgoogle.com/models/OdDHfzAUL/";
 
 let model = null;
 
@@ -1010,23 +1010,13 @@ async function startCamera() {
     }
 
 
-    if (
-        cameraRunning &&
-        stream &&
-        video
-    ) {
-
-        document.getElementById(
-            "status"
-        ).innerText =
-            "📷 Camera is already running.";
-
-        return;
-
-    }
-
-
     try {
+
+        /*
+         * Stop any previous camera first.
+         * This allows Start Camera to work again
+         * without refreshing the page.
+         */
 
         stopCamera();
 
@@ -1168,6 +1158,7 @@ async function startCamera() {
 
         }
 
+
         else if (
             error.name ===
             "NotFoundError"
@@ -1177,6 +1168,7 @@ async function startCamera() {
                 "❌ No suitable camera was found.";
 
         }
+
 
         else if (
             error.name ===
@@ -1448,6 +1440,7 @@ function handleImage(event) {
     image.onload = async function() {
 
         await predict(image);
+
 
         document.getElementById(
             "status"
@@ -1810,6 +1803,7 @@ function showResult(
         updateDashboard();
 
         /* +10 Eco Points */
+
         addEcoPoints();
 
     }
