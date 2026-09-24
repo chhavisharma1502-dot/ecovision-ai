@@ -147,7 +147,7 @@ input[type="file"] {
 
 #camera-video,
 #captured-image {
-    width: min(850px, 100%);
+    width: min(760px, 100%);
     max-width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
@@ -401,21 +401,80 @@ footer {
 ================================ */
 
 @media (max-width: 900px) {
-
     .main-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
     }
 
     .left-sidebar {
-        position: static;
+        position: sticky;
+        top: 10px;
+        min-width: 0;
     }
 
     .stats {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard, .points-card {
+        padding: 14px;
+    }
+
+    .dashboard h2, .points-card h2 {
+        font-size: 18px;
+    }
+
+    #pointsCount {
+        font-size: 34px;
     }
 }
 
 @media (max-width: 700px) {
+    .main-layout {
+        grid-template-columns: minmax(105px, 34%) minmax(0, 66%);
+        gap: 8px;
+    }
+
+    .left-sidebar {
+        position: sticky;
+        top: 8px;
+    }
+
+    .dashboard, .points-card {
+        padding: 10px 7px;
+        border-radius: 14px;
+    }
+
+    .dashboard h2, .points-card h2 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .stat {
+        padding: 9px 4px;
+        border-radius: 10px;
+    }
+
+    .stat h3 {
+        font-size: 21px;
+    }
+
+    .stat p {
+        font-size: 11px;
+    }
+
+    #pointsCount {
+        font-size: 28px;
+    }
+
+    #pointsMessage, .points-rule {
+        font-size: 10px;
+    }
+
+    .content-area {
+        min-width: 0;
+    }
 
     header {
         padding: 23px 15px;
@@ -778,7 +837,7 @@ footer {
 ========================================= */
 
 const MODEL_URL =
-    "https://teachablemachine.withgoogle.com/models/OdDHfzAUL/";
+    "https://teachablemachine.withgoogle.com/models/N_jW_k888/";
 
 let model = null;
 
@@ -1010,13 +1069,23 @@ async function startCamera() {
     }
 
 
-    try {
+    if (
+        cameraRunning &&
+        stream &&
+        video
+    ) {
 
-        /*
-         * Stop any previous camera first.
-         * This allows Start Camera to work again
-         * without refreshing the page.
-         */
+        document.getElementById(
+            "status"
+        ).innerText =
+            "📷 Camera is already running.";
+
+        return;
+
+    }
+
+
+    try {
 
         stopCamera();
 
@@ -1158,7 +1227,6 @@ async function startCamera() {
 
         }
 
-
         else if (
             error.name ===
             "NotFoundError"
@@ -1168,7 +1236,6 @@ async function startCamera() {
                 "❌ No suitable camera was found.";
 
         }
-
 
         else if (
             error.name ===
@@ -1440,7 +1507,6 @@ function handleImage(event) {
     image.onload = async function() {
 
         await predict(image);
-
 
         document.getElementById(
             "status"
@@ -1803,7 +1869,6 @@ function showResult(
         updateDashboard();
 
         /* +10 Eco Points */
-
         addEcoPoints();
 
     }
